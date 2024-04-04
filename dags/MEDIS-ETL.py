@@ -58,7 +58,7 @@ with DAG(
             task_id=f"runme_{i}",
             bash_command='echo "{{ task_instance_key_str }}" && sleep 1',
         )
-        task >> run_this
+        task >> post_task
 
     # [START howto_operator_bash_template]
     also_run_this = BashOperator(
