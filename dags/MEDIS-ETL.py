@@ -28,7 +28,7 @@ from airflow.operators.empty import EmptyOperator
 from airflow.providers.http.operators.http import SimpleHttpOperator
 
 with DAG(
-    dag_id="ETL_test",
+    dag_id="medis-etl",
     schedule="0 0 * * *",
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
