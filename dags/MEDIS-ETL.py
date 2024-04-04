@@ -41,7 +41,7 @@ with DAG(
     )
 
     # [START howto_operator_bash]
-    post_task = SimpleHttpOperator(
+    post_task = HttpOperator(
         task_id='LTC_Facility_Information_Fraser',
         method='POST',
         endpoint='{{var.value.my_url}}',
