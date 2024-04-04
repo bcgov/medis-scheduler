@@ -46,7 +46,7 @@ with DAG(
         method='POST',
         endpoint='{{var.value.my_url}}',
         data='{""version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false"}',
-        headers={"Content-Type": "application/json"},
+    ##    headers={"Content-Type": "application/json"},
     ##    xcom_push=True
     )
     # [END howto_operator_bash]
