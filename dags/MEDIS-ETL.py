@@ -22,14 +22,12 @@ import datetime
 
 import pendulum
 
-import logging
 
 from airflow.models.dag import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.http.operators.http import HttpOperator
 
-AIRFLOW__LOGGING__LOGGING_LEVEL=DEBUG
 
 with DAG(
     dag_id="medis-etl",
