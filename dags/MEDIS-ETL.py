@@ -43,7 +43,7 @@ with DAG(
     # [START howto_operator_bash]
     post_task = SimpleHttpOperator(
         task_id='LTC_Facility_Information_Fraser',
-        http_conn_id='http_default',
+        conn_id='http_default',
         method='POST',
         endpoint='{{var.value.my_url}}',
         data='{""version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false"}',
