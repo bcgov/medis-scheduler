@@ -45,7 +45,7 @@ with DAG(
         task_id='LTC_Facility_Information_Fraser',
         method='POST',
         endpoint='{{var.value.my_url}}',
-        data='{""version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false"}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false"}',
         headers={"Content-Type": "application/json"},
     ##    xcom_push=True
     )
