@@ -42,18 +42,26 @@ with DAG(
         task_id="run_this_last",
     )
 
-    # [START howto_operator_bash]
-    post_task = HttpOperator(
+    facility_fha_task = HttpOperator(
         task_id='LTC_Facility_Information_Fraser',
         method='POST',
         endpoint='{{var.value.my_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
-    ##    xcom_push=True
     )
-    # [END howto_operator_bash]
 
-    post_task >> run_this_last
+    facility_fha_task >> run_this_last
+
+    facility_viha_task = HttpOperator(
+        task_id='LTC_Facility_Information_Island',
+        method='POST',
+        endpoint='{{var.value.my_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    ) 
+     
+    facility_viha_task >> run_this_last
+
 
 if __name__ == "__main__":
     dag.test()
