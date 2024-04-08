@@ -54,7 +54,7 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-    facility_fha_task >> MEDIS_file_upload
+    facility_fha_task >> etl_job_task
 
     facility_viha_task = HttpOperator(
         task_id='LTC_Facility_Information_Island',
@@ -64,7 +64,7 @@ with DAG(
         headers={"Content-Type": "application/json"},
     ) 
 
-    facility_viha_task >> MEDIS_file_upload
+    facility_viha_task >> etl_job_task
 
 
 
