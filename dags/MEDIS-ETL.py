@@ -31,6 +31,7 @@ from airflow.operators.empty import EmptyOperator
 from airflow.providers.http.operators.http import HttpOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.providers.cncf.kubernetes.callbacks import KubernetesPodOperatorCallback
+from airflow.providers.cncf.kubernetes.operators.job import KubernetesJobOperator
 
 
 with DAG(
@@ -42,7 +43,7 @@ with DAG(
     tags=["example", "example2"],
     params={"example_key": "example_value"},
 ) as dag:
-    etl_job_task = KubernetesPodOperator(
+    etl_job_task = KubernetesJobOperator(
         task_id= 'MEDIS_file_upload'
     )
 
