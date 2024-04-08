@@ -27,6 +27,7 @@ from airflow.models.dag import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.http.operators.http import HttpOperator
+from airflow_kubernetes_job_operator.kubernetes_job_operator import KubernetesJobOperator
 
 
 with DAG(
@@ -38,8 +39,8 @@ with DAG(
     tags=["example", "example2"],
     params={"example_key": "example_value"},
 ) as dag:
-    run_this_last = EmptyOperator(
-        task_id="run_this_last",
+    etl_job_task = KubernetesJobOperator(
+        task_id= 'MEDIS_file_upload'
     )
 
     facility_fha_task = HttpOperator(
@@ -50,7 +51,7 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-    facility_fha_task >> run_this_last
+    facility_fha_task >> MEDIS_file_upload
 
     facility_viha_task = HttpOperator(
         task_id='LTC_Facility_Information_Island',
@@ -59,8 +60,9 @@ with DAG(
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     ) 
-     
-    facility_viha_task >> run_this_last
+
+    facility_viha_task >> MEDIS_file_upload
+
 
 
 if __name__ == "__main__":
