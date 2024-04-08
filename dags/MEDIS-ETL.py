@@ -42,7 +42,7 @@ with DAG(
     tags=["example", "example2"],
     params={"example_key": "example_value"},
 ) as dag:
-    etl_job_task = KubernetesJobOperator(
+    etl_job_task = KubernetesPodOperator(
         task_id= 'MEDIS_file_upload'
     )
 
