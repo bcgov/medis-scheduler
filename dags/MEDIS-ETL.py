@@ -44,7 +44,8 @@ with DAG(
     params={"example_key": "example_value"},
 ) as dag:
     etl_job_task = KubernetesJobOperator(
-        task_id= 'MEDIS_file_upload'
+        task_id='MEDIS_file_upload',
+        job_template_file='{{var.value.medis_job}}',
     )
 
     facility_fha_task = HttpOperator(
