@@ -46,7 +46,6 @@ with DAG(
     etl_job_task = KubernetesJobOperator(
         task_id='MEDIS_file_upload',
         job_template_file='{{var.value.medis_job}}',
-        ima
     )
 
     facility_fha_task = HttpOperator(
