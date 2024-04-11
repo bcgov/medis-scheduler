@@ -68,12 +68,12 @@ with DAG(
 
     facility_viha_task >> etl_job_task
 
-    delay_5s_task = BashOperator(
-        task_id="Dalay",
-        bash_command="sleep 5s",
-    )
+    #delay_5s_task = BashOperator(
+    #    task_id="Delay",
+    #    bash_command="sleep 5s",
+    #)
 
-    delay_5s_task >> facility_viha_task
+    #delay_5s_task >> facility_viha_task
 
 
 if __name__ == "__main__":
