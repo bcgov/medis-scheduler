@@ -59,7 +59,7 @@ with DAG(
     facility_fha_task >> etl_job_task
     
     delay_5s_task = BashOperator(
-        task_id="Dalay 5s",
+        task_id="Dalay",
         bash_command="sleep 5s",
     )
 
