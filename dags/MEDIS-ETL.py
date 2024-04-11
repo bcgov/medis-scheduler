@@ -47,7 +47,7 @@ with DAG(
         task_id='MEDIS_file_upload',
         job_template_file='{{var.value.medis_job}}',
     )
-
+    
     facility_fha_task = HttpOperator(
         task_id='LTC_Facility_Information_Fraser',
         method='POST',
@@ -57,7 +57,14 @@ with DAG(
     )
 
     facility_fha_task >> etl_job_task
+    
+    delay_5s_task = BashOperator(
+        task_id="Dalay 5s"
+        bash_command="sleep 5s",
+    )
 
+    delay_5s_task >> facility_viha_task 
+    
     facility_viha_task = HttpOperator(
         task_id='LTC_Facility_Information_Island',
         method='POST',
