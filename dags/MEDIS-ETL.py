@@ -99,6 +99,16 @@ with DAG(
 
     facility_vch_task >> etl_job_task
 
+    start_facility_extract = EmptyOperator(
+        task_id="Start_LTC_Facility_Extract",
+    )
+
+    start_facility_extract >> facility_fha_task
+    start_facility_extract >> facility_viha_task
+    start_facility_extract >> facility_iha_task
+    start_facility_extract >> facility_nha_task
+    start_facility_extract >> facility_vch_task
+
 
 
     #delay_5s_task = BashOperator(
