@@ -48,6 +48,61 @@ with DAG(
         task_id='MEDIS_file_upload',
         job_template_file='{{var.value.medis_job}}',
     )
+
+    start_ytd_extract = EmptyOperator(
+        task_id="Start_YTD_Extract",
+    )
+
+    ytd_fha_task = HttpOperator(
+        task_id='YTD_Fraser',
+        method='POST',
+        endpoint='{{var.value.facility_information_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    ytd_iha_task = HttpOperator(
+        task_id='YTD_Interior',
+        method='POST',
+        endpoint='{{var.value.facility_information_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+ 
+    
+    ytd_viha_task = HttpOperator(
+        task_id='YTD_Island',
+        method='POST',
+        endpoint='{{var.value.facility_information_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    ) 
+
+
+    ytd_nha_task = HttpOperator(
+        task_id='YTD_Northern',
+        method='POST',
+        endpoint='{{var.value.facility_information_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+
+    ytd_vch_task = HttpOperator(
+        task_id='LYTD_Vancouver',
+        method='POST',
+        endpoint='{{var.value.facility_information_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    start_ytd_extract >> ytd_fha_task >> etl_job_task
+    start_ytd_extract >> ytd_iha_task >> etl_job_task
+    start_ytd_extract >> ytd_nha_task >> etl_job_task
+    start_ytd_extract >> ytd_nha_task >> etl_job_task
+    start_ytd_extract >> ytd_vch_task >> etl_job_task
+
+
     
     facility_fha_task = HttpOperator(
         task_id='LTC_Facility_Information_Fraser',
@@ -57,17 +112,7 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-    facility_fha_task >> etl_job_task
-    
-    facility_viha_task = HttpOperator(
-        task_id='LTC_Facility_Information_Island',
-        method='POST',
-        endpoint='{{var.value.facility_information_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
-        headers={"Content-Type": "application/json"},
-    ) 
-
-    facility_viha_task >> etl_job_task
+    facility_fha_task >> start_ytd_extract
 
     facility_iha_task = HttpOperator(
         task_id='LTC_Facility_Information_Interior',
@@ -77,7 +122,17 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-    facility_iha_task >> etl_job_task
+    facility_iha_task >> start_ytd_extract    
+    
+    facility_viha_task = HttpOperator(
+        task_id='LTC_Facility_Information_Island',
+        method='POST',
+        endpoint='{{var.value.facility_information_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    ) 
+
+    facility_viha_task >> start_ytd_extract
 
     facility_nha_task = HttpOperator(
         task_id='LTC_Facility_Information_Northern',
@@ -87,7 +142,7 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-    facility_nha_task >> etl_job_task
+    facility_nha_task >> start_ytd_extract
 
     facility_vch_task = HttpOperator(
         task_id='LTC_Facility_Information_Vancouver',
@@ -97,15 +152,15 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-    facility_vch_task >> etl_job_task
+    facility_vch_task >> start_ytd_extract
 
     start_facility_extract = EmptyOperator(
         task_id="Start_LTC_Facility_Extract",
     )
 
     start_facility_extract >> facility_fha_task
-    start_facility_extract >> facility_viha_task
     start_facility_extract >> facility_iha_task
+    start_facility_extract >> facility_viha_task
     start_facility_extract >> facility_nha_task
     start_facility_extract >> facility_vch_task
 
