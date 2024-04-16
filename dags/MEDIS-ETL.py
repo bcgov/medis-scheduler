@@ -69,6 +69,38 @@ with DAG(
 
     facility_viha_task >> etl_job_task
 
+    facility_iha_task = HttpOperator(
+        task_id='LTC_Facility_Information_Interior',
+        method='POST',
+        endpoint='{{var.value.facility_information_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    facility_iha_task >> etl_job_task
+
+    facility_nha_task = HttpOperator(
+        task_id='LTC_Facility_Information_Northern',
+        method='POST',
+        endpoint='{{var.value.facility_information_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    facility_nha_task >> etl_job_task
+
+    facility_vch_task = HttpOperator(
+        task_id='LTC_Facility_Information_Northern',
+        method='POST',
+        endpoint='{{var.value.facility_information_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    facility_vch_task >> etl_job_task
+
+
+
     #delay_5s_task = BashOperator(
     #    task_id="Delay",
     #    bash_command="sleep 5s",
