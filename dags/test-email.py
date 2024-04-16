@@ -38,7 +38,7 @@ def send_failure_status_email(context):
 
 # Create a DAG and define your tasks
 with DAG(
-    dag_id="example_bash_operator_test",
+    dag_id="example_email_operator",
     schedule="0 0 * * *",
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
