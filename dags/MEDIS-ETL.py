@@ -50,11 +50,11 @@ with DAG(
     )
 
     start_ytd_extract = EmptyOperator(
-        task_id="Start_YTD_Extract",
+        task_id="Start_LTC_YTD_Extract",
     )
 
     ytd_fha_task = HttpOperator(
-        task_id='YTD_Fraser',
+        task_id='LTC_YTD_Fraser',
         method='POST',
         endpoint='{{var.value.quarterly_ytd_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
@@ -62,7 +62,7 @@ with DAG(
     )
 
     ytd_iha_task = HttpOperator(
-        task_id='YTD_Interior',
+        task_id='LTC_YTD_Interior',
         method='POST',
         endpoint='{{var.value.quarterly_ytd_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
@@ -71,7 +71,7 @@ with DAG(
  
     
     ytd_viha_task = HttpOperator(
-        task_id='YTD_Island',
+        task_id='LTC_YTD_Island',
         method='POST',
         endpoint='{{var.value.quarterly_ytd_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
@@ -80,7 +80,7 @@ with DAG(
 
 
     ytd_nha_task = HttpOperator(
-        task_id='YTD_Northern',
+        task_id='LTC_YTD_Northern',
         method='POST',
         endpoint='{{var.value.quarterly_ytd_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
@@ -89,7 +89,7 @@ with DAG(
 
 
     ytd_vch_task = HttpOperator(
-        task_id='LYTD_Vancouver',
+        task_id='LTC_YTD_Vancouver',
         method='POST',
         endpoint='{{var.value.quarterly_ytd_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
