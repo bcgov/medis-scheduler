@@ -90,7 +90,7 @@ with DAG(
     facility_nha_task >> etl_job_task
 
     facility_vch_task = HttpOperator(
-        task_id='LTC_Facility_Information_Northern',
+        task_id='LTC_Facility_Information_Vancouver',
         method='POST',
         endpoint='{{var.value.facility_information_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
