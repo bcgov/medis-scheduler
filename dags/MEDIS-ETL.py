@@ -52,7 +52,7 @@ with DAG(
     facility_fha_task = HttpOperator(
         task_id='LTC_Facility_Information_Fraser',
         method='POST',
-        endpoint='{{var.value.my_url}}',
+        endpoint='{{var.value.facility_information_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     )
@@ -62,7 +62,7 @@ with DAG(
     facility_viha_task = HttpOperator(
         task_id='LTC_Facility_Information_Island',
         method='POST',
-        endpoint='{{var.value.my_url}}',
+        endpoint='{{var.value.facility_information_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     ) 
