@@ -7,7 +7,6 @@ from airflow.models.dag import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.email import send_email
-from datetime import datetime
 from airflow.operators.empty import EmptyOperator
 
 def send_success_status_email(context):
