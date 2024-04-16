@@ -38,10 +38,10 @@ dag = DAG(
     schedule_interval=None
 )
 
-    some_task = EmptyOperator(
-        task_id="some_task",
+    start_task = EmptyOperator(
+        task_id="executetask",
     )
-task_to_watch = some_task
+task_to_watch = executetask
 
 success_email_task = PythonOperator(
     task_id='success_email_task',
