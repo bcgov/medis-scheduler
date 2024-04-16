@@ -56,7 +56,7 @@ with DAG(
     ytd_fha_task = HttpOperator(
         task_id='YTD_Fraser',
         method='POST',
-        endpoint='{{var.value.facility_information_url}}',
+        endpoint='{{var.value.quarterly_ytd_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     )
@@ -64,7 +64,7 @@ with DAG(
     ytd_iha_task = HttpOperator(
         task_id='YTD_Interior',
         method='POST',
-        endpoint='{{var.value.facility_information_url}}',
+        endpoint='{{var.value.quarterly_ytd_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     )
@@ -73,7 +73,7 @@ with DAG(
     ytd_viha_task = HttpOperator(
         task_id='YTD_Island',
         method='POST',
-        endpoint='{{var.value.facility_information_url}}',
+        endpoint='{{var.value.quarterly_ytd_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     ) 
@@ -82,7 +82,7 @@ with DAG(
     ytd_nha_task = HttpOperator(
         task_id='YTD_Northern',
         method='POST',
-        endpoint='{{var.value.facility_information_url}}',
+        endpoint='{{var.value.quarterly_ytd_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     )
@@ -91,7 +91,7 @@ with DAG(
     ytd_vch_task = HttpOperator(
         task_id='LYTD_Vancouver',
         method='POST',
-        endpoint='{{var.value.facility_information_url}}',
+        endpoint='{{var.value.quarterly_ytd_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     )
