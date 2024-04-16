@@ -50,7 +50,7 @@ with DAG(
  start_task = EmptyOperator(
     task_id="executetask",
  )
- task_to_watch = executetask
+ task_to_watch = start_task
 
  success_email_task = PythonOperator(
     task_id='success_email_task',
