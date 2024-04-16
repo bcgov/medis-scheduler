@@ -1,4 +1,5 @@
-from airflow import DAG
+from airflow.models.dag import DAG
+from airflow.operators.bash import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.email import send_email
 from datetime import datetime
@@ -32,31 +33,35 @@ def send_failure_status_email(context):
 
 
 # Create a DAG and define your tasks
-dag = DAG(
-    'email_example',
-    start_date=datetime(2023, 1, 1),
-    schedule_interval=None
-)
+with DAG(
+    dag_id="example_bash_operator_test",
+    schedule="0 0 * * *",
+    start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
+    catchup=False,
+    dagrun_timeout=datetime.timedelta(minutes=60),
+    tags=["example", "example2"],
+    params={"example_key": "example_value"},
+) as dag:
 
-    start_task = EmptyOperator(
-        task_id="executetask",
-    )
-task_to_watch = executetask
+ start_task = EmptyOperator(
+    task_id="executetask",
+ )
+ task_to_watch = executetask
 
-success_email_task = PythonOperator(
+ success_email_task = PythonOperator(
     task_id='success_email_task',
     python_callable=send_success_status_email,
     provide_context=True,
     dag=dag
-)
+ )
 
-failure_email_task = PythonOperator(
+ failure_email_task = PythonOperator(
     task_id='failure_email_task',
     python_callable=send_failure_status_email,
     provide_context=True,
     dag=dag
-)
+ )
 
 # Set the on_success_callback and on_failure_callback
-success_email_task.set_upstream(task_to_watch)
-failure_email_task.set_upstream(task_to_watch)
+ success_email_task.set_upstream(task_to_watch)
+ failure_email_task.set_upstream(task_to_watch)
