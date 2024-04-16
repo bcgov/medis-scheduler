@@ -36,8 +36,7 @@ from airflow.providers.cncf.kubernetes.operators.job import KubernetesJobOperato
 
 with DAG(
     dag_id="medis-etl",
-    ##schedule="0 0 * * *",
-    schedule=None,
+    schedule="0 0 * * *",
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
     dagrun_timeout=datetime.timedelta(minutes=60),
