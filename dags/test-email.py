@@ -10,7 +10,7 @@ from airflow.utils.email import send_email
 from airflow.operators.empty import EmptyOperator
 
 def send_success_status_email(context):
-    task_instance = context['executetask']
+    task_instance = context['task_instance']
     task_status = task_instance.current_state()
 
     subject = f"Airflow Task {task_instance.task_id} {task_status}"
