@@ -89,7 +89,7 @@ with DAG(
 
 
     ytd_vch_task = HttpOperator(
-        task_id='LYTD_Vancouver',
+        task_id='YTD_Vancouver',
         method='POST',
         endpoint='{{var.value.quarterly_ytd_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
