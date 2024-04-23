@@ -112,4 +112,4 @@ with DAG(
     send_email.set_upstream(etl_job_task)
 
     if __name__ == "__main__":
-    dag.ytdtest()
+        dag.ytdtest()
