@@ -32,6 +32,7 @@ from airflow.providers.http.operators.http import HttpOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.providers.cncf.kubernetes.callbacks import KubernetesPodOperatorCallback
 from airflow.providers.cncf.kubernetes.operators.job import KubernetesJobOperator
+from airflow.operators.email_operator import EmailOperator
 
 
 with DAG(
@@ -96,8 +97,19 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
+    send_email = EmailOperator( 
+        task_id='send_email', 
+        to='tatiana.pluzhnikova@cgi.com', 
+        subject='ingestion complete', 
+        html_content="Date: {{ ds }}", 
+        dag=dag_email)
+
     start_ytd_extract >> ytd_fha_task >> etl_job_task
     start_ytd_extract >> ytd_iha_task >> etl_job_task
     start_ytd_extract >> ytd_viha_task >> etl_job_task
     start_ytd_extract >> ytd_nha_task >> etl_job_task
     start_ytd_extract >> ytd_vch_task >> etl_job_task
+    send_email.set_upstream(etl_job_task)
+
+    if __name__ == "__main__":
+    dag.ytdtest()
