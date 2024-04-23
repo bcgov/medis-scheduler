@@ -102,7 +102,7 @@ with DAG(
         to='tatiana.pluzhnikova@cgi.com', 
         subject='ingestion complete', 
         html_content="Date: {{ ds }}",
-        trigger_rule=TriggerRule.ALL_FAILED
+        trigger_rule="all_failed"
     )
 
     start_ytd_extract >> ytd_fha_task >> etl_job_task
