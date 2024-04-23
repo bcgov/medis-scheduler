@@ -111,5 +111,3 @@ with DAG(
     start_ytd_extract >> ytd_vch_task >> etl_job_task
     send_email.set_upstream(etl_job_task)
 
-    if __name__ == "__main__":
-        dag.ytdtest()
