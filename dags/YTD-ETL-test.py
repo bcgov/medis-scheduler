@@ -102,7 +102,7 @@ with DAG(
         to='tatiana.pluzhnikova@cgi.com', 
         subject='ingestion complete', 
         html_content="Date: {{ ds }}", 
-        dag=dag_email)
+    )
 
     start_ytd_extract >> ytd_fha_task >> etl_job_task
     start_ytd_extract >> ytd_iha_task >> etl_job_task
