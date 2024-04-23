@@ -101,7 +101,8 @@ with DAG(
         task_id='send_email', 
         to='tatiana.pluzhnikova@cgi.com', 
         subject='ingestion complete', 
-        html_content="Date: {{ ds }}", 
+        html_content="Date: {{ ds }}",
+        trigger_rule=TriggerRule.ALL_FAILED
     )
 
     start_ytd_extract >> ytd_fha_task >> etl_job_task
