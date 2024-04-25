@@ -15,36 +15,34 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-"""Example DAG demonstrating the usage of the BashOperator."""
-from __future__ import annotations
-
-import datetime
-
-import pendulum
-
-import kubernetes.client as k8s
-import kubernetes_asyncio.client as async_k8s
-
-from airflow.models.dag import DAG
+from datetime import datetime
+from airflow import DAG
 from airflow.operators.bash import BashOperator
-from airflow.operators.empty import EmptyOperator
-from airflow.providers.http.operators.http import HttpOperator
-from airflow.operators.email_operator import EmailOperator
+from airflow.providers.smtp.notifications.smtp import send_smtp_notification
 
 with DAG(
-    dag_id="email_test",
-    #schedule="0 0 * * *",
-    schedule=None,
-    start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
+    dag_id="smtp_notifier",
+    schedule_interval=None,
+    start_date=datetime(2023, 1, 1),
     catchup=False,
-    dagrun_timeout=datetime.timedelta(minutes=60),
-    tags=["etl", "medis"],
-   # params={"example_key": "example_value"},
-) as dag:
-    send_email = EmailOperator( 
-        task_id='send_email', 
-        to='tatiana.pluzhnikova@cgi.com', 
-        subject='ingestion complete', 
-        html_content="Date: {{ ds }}",
-        trigger_rule="all_failed"
+    on_failure_callback=[
+        send_smtp_notification(
+            from_email="airflow@gov.bc.ca",
+            to="tatiana.pluzhnikova@cgi.com",
+            subject="[Error] The dag {{ dag.dag_id }} failed",
+            html_content="debug logs",
+        )
+    ],
+):
+    BashOperator(
+        task_id="mytask",
+        on_failure_callback=[
+            send_smtp_notification(
+                from_email="airflow@gov.bc.ca",
+                to="tatina.pluzhnikova@cgi.com",
+                subject="[Error] The Task {{ ti.task_id }} failed",
+                html_content="debug logs",
+            )
+        ],
+        bash_command="fail",
     )
