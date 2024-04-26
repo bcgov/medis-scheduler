@@ -44,7 +44,7 @@ with DAG(
 ) as dag:
     send_email = EmailOperator( 
         task_id='send_email', 
-        to='tatiana.pluzhnikova@cgi.com', 'evgeny.pluzhnikov@cgi.com',
+        to='tatiana.pluzhnikova@cgi.com',
         subject='privet ot moego DAG', 
         html_content="Date: {{ ds }}",
         trigger_rule="all_failed"
