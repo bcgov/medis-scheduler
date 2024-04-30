@@ -30,7 +30,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.http.operators.http import HttpOperator
 from airflow.operators.email_operator import EmailOperator
-
+from airflow.exceptions import AirflowFailException
 
 with DAG(
     dag_id="test_ETL_notification",
@@ -44,12 +44,11 @@ with DAG(
 ) as dag:
 
     def pull_xcom_and_act(**kwargs):
-    ti = kwargs['ti']
-    value = ti.xcom_pull(key='my_key')
-    if value == 'my_value':
-        do_something()
-    else:
-        do_something_else()
+        ti = kwargs['ti']
+        value = ti.xcom_pull(key='return_value')
+        if value == '1':
+            raise AirflowFailException
+
 
     send_email = EmailOperator( 
         task_id='send_email', 
