@@ -52,7 +52,8 @@ with DAG(
 
     send_email = EmailOperator( 
         task_id='send_email', 
-        to='tatiana.pluzhnikova@cgi.com',
+        #to='tatiana.pluzhnikova@cgi.com',
+        to='{{var.value.recipients}}',
         subject='ETL', 
         html_content="Date: {{ ds }}",
         #trigger_rule="all_failed"
