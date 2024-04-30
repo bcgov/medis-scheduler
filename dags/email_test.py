@@ -33,15 +33,17 @@ from airflow.operators.email_operator import EmailOperator
 
 
 with DAG(
-    dag_id="email_test",
+    dag_id="test_ETL_notification",
     #schedule="0 0 * * *",
     schedule=None,
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
     dagrun_timeout=datetime.timedelta(minutes=60),
-    tags=["etl", "medis"],
+    tags=["etl", "notification"],
    # params={"example_key": "example_value"},
 ) as dag:
+
+
     send_email = EmailOperator( 
         task_id='send_email', 
         to='tatiana.pluzhnikova@cgi.com',
@@ -49,3 +51,10 @@ with DAG(
         html_content="Date: {{ ds }}",
         trigger_rule="all_failed"
     )
+
+    run_this = BashOperator(
+        task_id="run_befor_email",
+        bash_command="echo 1",
+    )
+
+    run_this >> send_email
