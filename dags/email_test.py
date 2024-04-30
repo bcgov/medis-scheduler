@@ -53,14 +53,20 @@ with DAG(
     send_email = EmailOperator( 
         task_id='send_email', 
         to='tatiana.pluzhnikova@cgi.com',
-        subject='privet ot moego DAG', 
+        subject='ETL', 
         html_content="Date: {{ ds }}",
-        trigger_rule="all_failed"
+        #trigger_rule="all_failed"
     )
 
     run_this = BashOperator(
         task_id="run_befor_email",
         bash_command="echo 1",
     )
+
+        def pull_xcom_and_act(**kwargs):
+            ti = kwargs['ti']
+            value = ti.xcom_pull(key='return_value')
+            if value == '1':
+                raise AirflowFailException
 
     run_this >> send_email
