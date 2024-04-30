@@ -43,6 +43,13 @@ with DAG(
    # params={"example_key": "example_value"},
 ) as dag:
 
+    def pull_xcom_and_act(**kwargs):
+    ti = kwargs['ti']
+    value = ti.xcom_pull(key='my_key')
+    if value == 'my_value':
+        do_something()
+    else:
+        do_something_else()
 
     send_email = EmailOperator( 
         task_id='send_email', 
