@@ -63,10 +63,6 @@ with DAG(
         bash_command="echo 1",
     )
 
-        def pull_xcom_and_act(**kwargs):
-            ti = kwargs['ti']
-            value = ti.xcom_pull(key='return_value')
-            if value == '1':
-                raise AirflowFailException
+
 
     run_this >> send_email
