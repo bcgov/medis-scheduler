@@ -105,7 +105,7 @@ with DAG(
         trigger_rule="all_failed"
     )
 
-    tart_ytd_extract >> ytd_fha_task
+    start_ytd_extract >> ytd_fha_task
     #start_ytd_extract >> ytd_fha_task >> etl_job_task
     #start_ytd_extract >> ytd_iha_task >> etl_job_task
     #start_ytd_extract >> ytd_viha_task >> etl_job_task
