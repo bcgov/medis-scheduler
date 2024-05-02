@@ -105,11 +105,11 @@ with DAG(
         trigger_rule="all_failed"
     )
 
-    start_ytd_extract >> ytd_fha_task
-    #start_ytd_extract >> ytd_fha_task >> etl_job_task
-    #start_ytd_extract >> ytd_iha_task >> etl_job_task
-    #start_ytd_extract >> ytd_viha_task >> etl_job_task
-    #start_ytd_extract >> ytd_nha_task >> etl_job_task
-    #start_ytd_extract >> ytd_vch_task >> etl_job_task
-   ##send_email.set_upstream(etl_job_task)
+    
+    start_ytd_extract >> ytd_fha_task >> etl_job_task
+    start_ytd_extract >> ytd_iha_task >> etl_job_task
+    start_ytd_extract >> ytd_viha_task >> etl_job_task
+    start_ytd_extract >> ytd_nha_task >> etl_job_task
+    start_ytd_extract >> ytd_vch_task >> etl_job_task
+    send_email.set_upstream(etl_job_task)
 
