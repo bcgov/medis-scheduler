@@ -27,6 +27,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.email import send_email
 from airflow.exceptions import AirflowSkipException
+from airflow.models import Variable
 
 with DAG(
     dag_id="test_fail_success_send_email",
@@ -65,7 +66,7 @@ with DAG(
         # If there are failed upstream tasks, send an email with the failed task IDs
         elif len(failed_upstream_task_ids) > 0:
             send_email(
-                to='{{var.value.ETL_email_list_alerts}}',
+                to=Variable.get("ETL_email_list_alerts"),
                 subject='subject',
                 html_content=generate_html(failed_upstream_task_ids),
             )
