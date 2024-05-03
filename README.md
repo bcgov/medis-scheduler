@@ -24,6 +24,8 @@ docker-compose up airflow-init
 docker-compose up
 ```
 
+- You can access the Airflow instance at [http://localhost:8080/](http://localhost:8080/), and log in with username "airflow" and password "airflow".
+
 - You can then start or stop the deployment when developing.
 
 ### Clean up
