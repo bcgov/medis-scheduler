@@ -30,7 +30,7 @@ from airflow.exceptions import AirflowSkipException
 
 with DAG(
     dag_id="test_fail_success_send_email",
-    #schedule="0 0 * * *",
+    # schedule="0 0 * * *",
     schedule=None,
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
@@ -56,7 +56,8 @@ with DAG(
         # Get list of all tasks that have failed for this DagRun
         failed_task_instances = dag_run.get_task_instances(state='failed')
         # Get intersection of the sets to get upstream tasks that failed
-        failed_upstream_task_ids = upstream_task_ids.intersection([task.task_id for task in failed_task_instances])
+        failed_upstream_task_ids = upstream_task_ids.intersection(
+            [task.task_id for task in failed_task_instances])
         print(f"Upstream tasks that failed: {failed_upstream_task_ids}")
         # If no upstream tasks have failed, skip this task
         if len(failed_upstream_task_ids) == 0:
@@ -70,7 +71,8 @@ with DAG(
             )
         return failed_upstream_task_ids
 
-    get_failed_ids = PythonOperator(task_id="get_failed_ids", python_callable=get_failed_ids_send_email,trigger_rule="all_done")
+    get_failed_ids = PythonOperator(
+        task_id="get_failed_ids", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
 
     http_local_post_500_1 = BashOperator(
         task_id='http_local_post_500_1',
@@ -99,7 +101,7 @@ with DAG(
     http_local_post_200_3 = BashOperator(
         task_id='http_local_post_200_3',
         bash_command='echo "Success Task"; exit 0;',
-    dag=dag,
+        dag=dag,
     )
 
     http_local_post_500_1 >> get_failed_ids
