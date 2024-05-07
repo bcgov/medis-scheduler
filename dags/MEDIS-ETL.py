@@ -83,7 +83,10 @@ with DAG(
             )
         return failed_upstream_task_ids
 
-    failed_tasks_notification = PythonOperator(
+    failed_tasks_notification_1 = PythonOperator(
+        task_id="Failed_Tasks_Notification", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
+
+    failed_tasks_notification_2 = PythonOperator(
         task_id="Failed_Tasks_Notification", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
 
     start_ytd_extract = EmptyOperator(
@@ -183,17 +186,17 @@ with DAG(
         task_id="Start_LTC_Facility_Extract",
     )
 
-    start_facility_extract >> facility_fha_task >> failed_tasks_notification >> start_ytd_extract
-    start_facility_extract >> facility_iha_task >> failed_tasks_notification >> start_ytd_extract
-    start_facility_extract >> facility_viha_task >> failed_tasks_notification >> start_ytd_extract
-    start_facility_extract >> facility_nha_task >> failed_tasks_notification >> start_ytd_extract
-    start_facility_extract >> facility_vch_task >> failed_tasks_notification >> start_ytd_extract
+    start_facility_extract >> facility_fha_task >> failed_tasks_notification_1 >> start_ytd_extract
+    start_facility_extract >> facility_iha_task >> failed_tasks_notification_1 >> start_ytd_extract
+    start_facility_extract >> facility_viha_task >> failed_tasks_notification_1 >> start_ytd_extract
+    start_facility_extract >> facility_nha_task >> failed_tasks_notification_1 >> start_ytd_extract
+    start_facility_extract >> facility_vch_task >> failed_tasks_notification_1 >> start_ytd_extract
 
-    start_ytd_extract >> ytd_fha_task >> failed_tasks_notification >> etl_job_task
-    start_ytd_extract >> ytd_iha_task >> failed_tasks_notification >> etl_job_task
-    start_ytd_extract >> ytd_viha_task >> failed_tasks_notification >> etl_job_task
-    start_ytd_extract >> ytd_nha_task >> failed_tasks_notification >> etl_job_task
-    start_ytd_extract >> ytd_vch_task >> failed_tasks_notification >> etl_job_task
+    start_ytd_extract >> ytd_fha_task >> failed_tasks_notification_2 >> etl_job_task
+    start_ytd_extract >> ytd_iha_task >> failed_tasks_notification_2 >> etl_job_task
+    start_ytd_extract >> ytd_viha_task >> failed_tasks_notification_2 >> etl_job_task
+    start_ytd_extract >> ytd_nha_task >> failed_tasks_notification_2 >> etl_job_task
+    start_ytd_extract >> ytd_vch_task >> failed_tasks_notification_2 >> etl_job_task
 
 
 
