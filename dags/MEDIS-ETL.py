@@ -48,26 +48,19 @@ with DAG(
     tags=["etl", "medis"],
    # params={"example_key": "example_value"},
 ) as dag:
-    etl_job_task = KubernetesJobOperator(
-        task_id='MEDIS_file_upload',
-        job_template_file='{{var.value.medis_job}}',
-    )
 
-# Function to generate HTML content for email
-    def generate_html(failed_ids):
+    # Function to generate HTML content for email in case of success
+    def generate_success_html(dag_id):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-        html_content = "<html><head></head><body><h1>Airflow {dag_id} DAG run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % current_time
-        for failed_id in failed_ids:
-            html_content += f"<li>{failed_id}</li>"
-        html_content += "</ul><h4>Please access Airflow and review tasks run: <a href='" + \
-           Variable.get("airflow_url") + "'>" + \
-           Variable.get("airflow_url") + "</a></h4></body></html>"
+        html_content = "<html><head></head><body><h1>Airflow %s DAG run at %s succeeded</h1><p>Automatically generated message in case of success.</p></body></html>" % (dag_id,current_time)
         print(html_content)
         return html_content
 
+    # Function to check all previous upstream tasks and notify user if dag run results
     def get_failed_ids_send_email(ds=None, **kwargs):
         ti = kwargs['ti']
         dag_run = kwargs['dag_run']
+        dag_id = kwargs['dag'].dag_id
         # Get all tasks that are upstream of this task
         upstream_task_ids = ti.task.get_flat_relative_ids(upstream=True)
         # Get list of all tasks that have failed for this DagRun
@@ -76,17 +69,27 @@ with DAG(
         failed_upstream_task_ids = upstream_task_ids.intersection(
             [task.task_id for task in failed_task_instances])
         print(f"Upstream tasks that failed: {failed_upstream_task_ids}")
-        # If no upstream tasks have failed, skip this task
+        # If no upstream tasks have failed, send an email with success message
         if len(failed_upstream_task_ids) == 0:
-            raise AirflowSkipException("No upstream tasks have failed")
+            send_email(
+                to=Variable.get("ETL_email_list_success"),
+                subject='Airflow ' + dag_id + ' run SUCCEEDED!',
+                html_content=generate_success_html(dag_id),
+            )
         # If there are failed upstream tasks, send an email with the failed task IDs
         elif len(failed_upstream_task_ids) > 0:
             send_email(
                 to=Variable.get("ETL_email_list_alerts"),
-                subject='Airflow {dag_id} run FAILED!',
-                html_content=generate_html(failed_upstream_task_ids),
+                subject='Airflow ' + dag_id + ' run FAILED!',
+                html_content=generate_failed_html(failed_upstream_task_ids,dag_id),
             )
         return failed_upstream_task_ids
+
+
+    etl_job_task = KubernetesJobOperator(
+        task_id='MEDIS_file_upload',
+        job_template_file='{{var.value.medis_job}}',
+    )
 
     failed_tasks_notification = PythonOperator(
         task_id="Failed_Tasks_Notification", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
