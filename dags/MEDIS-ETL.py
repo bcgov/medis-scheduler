@@ -56,10 +56,10 @@ with DAG(
 # Function to generate HTML content for email
     def generate_html(failed_ids):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-        html_content = "<html><head></head><body><h1>Airflow "medis_etl" DAG run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % current_time
+        html_content = "<html><head></head><body><h1>Airflow medis_etl DAG run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % current_time
         for failed_id in failed_ids:
             html_content += f"<li>{failed_id}</li>"
-        html_content += "</ul><h4>Please access Airflow and review tasks run:<p>{{var.value.airflow_url_test}}</p></h4></body></html>"
+        html_content += "</ul><h4>Please access Airflow and review tasks run:<p>{{var.value.airflow_url}}</p></h4></body></html>"
         print(html_content)
         return html_content
 
