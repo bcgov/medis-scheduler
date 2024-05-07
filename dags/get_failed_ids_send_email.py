@@ -46,8 +46,8 @@ with DAG(
         for failed_id in failed_ids:
             html_content += f"<li>{failed_id}</li>"
         html_content += "</ul><h4>Please access Airflow and review tasks run: <a href='" + \
-           str(Variable.get("airflow_url")).replace("***","airflow") + "'>" + \
-           str(Variable.get("airflow_url")).replace("***","airflow") + "</a></h4></body></html>"
+           Variable.get("airflow_url") + "'>" + \
+           Variable.get("airflow_url") + "</a></h4></body></html>"
         print(html_content)
         return html_content
 
