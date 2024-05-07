@@ -83,7 +83,7 @@ with DAG(
         elif len(failed_upstream_task_ids) > 0:
             send_email(
                 to=Variable.get("ETL_email_list_alerts"),
-                subject='subject',
+                subject='Airflow medis_etl run FAILED!',
                 html_content=generate_html(failed_upstream_task_ids),
             )
         return failed_upstream_task_ids
@@ -194,17 +194,13 @@ with DAG(
     start_facility_extract >> facility_vch_task >> start_ytd_extract
     start_facility_extract >> http_local_post_500_1 >> start_ytd_extract
 
-    start_ytd_extract >> ytd_fha_task >> failed_tasks_notification
-    start_ytd_extract >> ytd_iha_task >> failed_tasks_notification
-    start_ytd_extract >> ytd_viha_task >> failed_tasks_notification
-    start_ytd_extract >> ytd_nha_task >> failed_tasks_notification
-    start_ytd_extract >> ytd_vch_task >> failed_tasks_notification
-
     start_ytd_extract >> ytd_fha_task >> etl_job_task
     start_ytd_extract >> ytd_iha_task >> etl_job_task
     start_ytd_extract >> ytd_viha_task >> etl_job_task
     start_ytd_extract >> ytd_nha_task >> etl_job_task
     start_ytd_extract >> ytd_vch_task >> etl_job_task
+
+    etl_job_task >> failed_tasks_notification
 
 
     #delay_5s_task = BashOperator(
