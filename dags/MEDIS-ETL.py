@@ -84,10 +84,10 @@ with DAG(
         return failed_upstream_task_ids
 
     failed_tasks_notification_1 = PythonOperator(
-        task_id="Failed_Tasks_Notification", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
+        task_id="Failed_Tasks_Notification_LTC", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
 
     failed_tasks_notification_2 = PythonOperator(
-        task_id="Failed_Tasks_Notification", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
+        task_id="Failed_Tasks_Notification_YTD", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
 
     start_ytd_extract = EmptyOperator(
         task_id="Start_LTC_YTD_Extract",
