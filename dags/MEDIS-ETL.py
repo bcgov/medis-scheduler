@@ -190,11 +190,11 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-    http_local_post_500_1 = BashOperator(
-        task_id='http_local_post_500_1',
-        bash_command='echo "Failed Task"; exit 1;',
-        dag=dag,
-    )
+   # http_local_post_500_1 = BashOperator(
+   #     task_id='http_local_post_500_1',
+   #     bash_command='echo "Failed Task"; exit 1;',
+   #     dag=dag,
+   # )
 
 
     start_facility_extract = EmptyOperator(
@@ -207,7 +207,7 @@ with DAG(
     start_facility_extract >> facility_viha_task >> start_ytd_extract
     start_facility_extract >> facility_nha_task >> start_ytd_extract
     start_facility_extract >> facility_vch_task >> start_ytd_extract
-    start_facility_extract >> http_local_post_500_1 >> start_ytd_extract
+   # start_facility_extract >> http_local_post_500_1 >> start_ytd_extract
 
     start_ytd_extract >> ytd_fha_task >> etl_job_task
     start_ytd_extract >> ytd_iha_task >> etl_job_task
