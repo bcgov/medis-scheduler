@@ -56,7 +56,7 @@ with DAG(
 # Function to generate HTML content for email
     def generate_html(failed_ids):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-        html_content = "<html><head></head><body><h1>Airflow medis_etl DAG run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % current_time
+        html_content = "<html><head></head><body><h1>Airflow {dag_id} DAG run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % current_time
         for failed_id in failed_ids:
             html_content += f"<li>{failed_id}</li>"
         html_content += "</ul><h4>Please access Airflow and review tasks run: <a href='" + \
@@ -83,7 +83,7 @@ with DAG(
         elif len(failed_upstream_task_ids) > 0:
             send_email(
                 to=Variable.get("ETL_email_list_alerts"),
-                subject='Airflow medis_etl run FAILED!',
+                subject='Airflow {dag_id} run FAILED!',
                 html_content=generate_html(failed_upstream_task_ids),
             )
         return failed_upstream_task_ids
