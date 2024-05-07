@@ -59,7 +59,9 @@ with DAG(
         html_content = "<html><head></head><body><h1>Airflow medis_etl DAG run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % current_time
         for failed_id in failed_ids:
             html_content += f"<li>{failed_id}</li>"
-        html_content += "</ul><h4>Please access Airflow and review tasks run:<p>{{var.value.airflow_url}}</p></h4></body></html>"
+        html_content += "</ul><h4>Please access Airflow and review tasks run: <a href='" + \
+           Variable.get("airflow_url") + "'>" + \
+           Variable.get("airflow_url") + "</a></h4></body></html>"
         print(html_content)
         return html_content
 
@@ -86,11 +88,8 @@ with DAG(
             )
         return failed_upstream_task_ids
 
-    failed_tasks_notification_1 = PythonOperator(
-        task_id="Failed_Tasks_Notification_Facility", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
-
-    failed_tasks_notification_2 = PythonOperator(
-        task_id="Failed_Tasks_Notification_YTD", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
+    failed_tasks_notification = PythonOperator(
+        task_id="Failed_Tasks_Notification", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
 
     start_ytd_extract = EmptyOperator(
         task_id="Start_LTC_YTD_Extract",
@@ -111,7 +110,6 @@ with DAG(
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     )
- 
     
     ytd_viha_task = HttpOperator(
         task_id='LTC_YTD_Island',
@@ -121,7 +119,6 @@ with DAG(
         headers={"Content-Type": "application/json"},
     ) 
 
-
     ytd_nha_task = HttpOperator(
         task_id='LTC_YTD_Northern',
         method='POST',
@@ -130,7 +127,6 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-
     ytd_vch_task = HttpOperator(
         task_id='LTC_YTD_Vancouver',
         method='POST',
@@ -138,8 +134,7 @@ with DAG(
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     )
-
-    
+  
     facility_fha_task = HttpOperator(
         task_id='LTC_Facility_Information_Fraser',
         method='POST',
@@ -147,7 +142,6 @@ with DAG(
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     )
-
 
     facility_iha_task = HttpOperator(
         task_id='LTC_Facility_Information_Interior',
@@ -157,7 +151,6 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-    
     facility_viha_task = HttpOperator(
         task_id='LTC_Facility_Information_Island',
         method='POST',
@@ -166,7 +159,6 @@ with DAG(
         headers={"Content-Type": "application/json"},
     ) 
 
-
     facility_nha_task = HttpOperator(
         task_id='LTC_Facility_Information_Northern',
         method='POST',
@@ -174,7 +166,6 @@ with DAG(
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     )
-
 
     facility_vch_task = HttpOperator(
         task_id='LTC_Facility_Information_Vancouver',
@@ -195,12 +186,6 @@ with DAG(
         task_id="Start_LTC_Facility_Extract",
     )
 
-    start_facility_extract >> facility_fha_task >> failed_tasks_notification_1
-    start_facility_extract >> facility_iha_task >> failed_tasks_notification_1
-    start_facility_extract >> facility_viha_task >> failed_tasks_notification_1
-    start_facility_extract >> facility_nha_task >> failed_tasks_notification_1
-    start_facility_extract >> facility_vch_task >> failed_tasks_notification_1
-    start_facility_extract >> http_local_post_500_1 >> failed_tasks_notification_1
 
     start_facility_extract >> facility_fha_task >> start_ytd_extract
     start_facility_extract >> facility_iha_task >> start_ytd_extract
@@ -209,11 +194,11 @@ with DAG(
     start_facility_extract >> facility_vch_task >> start_ytd_extract
     start_facility_extract >> http_local_post_500_1 >> start_ytd_extract
 
-    start_ytd_extract >> ytd_fha_task >> failed_tasks_notification_2
-    start_ytd_extract >> ytd_iha_task >> failed_tasks_notification_2
-    start_ytd_extract >> ytd_viha_task >> failed_tasks_notification_2
-    start_ytd_extract >> ytd_nha_task >> failed_tasks_notification_2
-    start_ytd_extract >> ytd_vch_task >> failed_tasks_notification_2
+    start_ytd_extract >> ytd_fha_task >> failed_tasks_notification
+    start_ytd_extract >> ytd_iha_task >> failed_tasks_notification
+    start_ytd_extract >> ytd_viha_task >> failed_tasks_notification
+    start_ytd_extract >> ytd_nha_task >> failed_tasks_notification
+    start_ytd_extract >> ytd_vch_task >> failed_tasks_notification
 
     start_ytd_extract >> ytd_fha_task >> etl_job_task
     start_ytd_extract >> ytd_iha_task >> etl_job_task
