@@ -34,6 +34,8 @@ from airflow.providers.cncf.kubernetes.callbacks import KubernetesPodOperatorCal
 from airflow.providers.cncf.kubernetes.operators.job import KubernetesJobOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.exceptions import AirflowSkipException
+from airflow.utils.email import send_email
+from airflow.models import Variable
 
 
 with DAG(
