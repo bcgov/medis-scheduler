@@ -31,7 +31,6 @@ from airflow.models import Variable
 
 with DAG(
     dag_id="test_fail_success_send_email",
-    # schedule="0 0 * * *",
     schedule=None,
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
@@ -40,9 +39,9 @@ with DAG(
 ) as dag:
 
     # Function to generate HTML content for email
-    def generate_html(failed_ids):
+    def generate_html(failed_ids,dag_id):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-        html_content = "<html><head></head><body><h1>Airflow run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % current_time
+        html_content = "<html><head></head><body><h1>Airflow %s DAG run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % (dag_id,current_time)
         for failed_id in failed_ids:
             html_content += f"<li>{failed_id}</li>"
         html_content += "</ul><h4>Please access Airflow and review tasks run: <a href='" + \
@@ -54,6 +53,7 @@ with DAG(
     def get_failed_ids_send_email(ds=None, **kwargs):
         ti = kwargs['ti']
         dag_run = kwargs['dag_run']
+        dag_id = kwargs['dag'].dag_id
         # Get all tasks that are upstream of this task
         upstream_task_ids = ti.task.get_flat_relative_ids(upstream=True)
         # Get list of all tasks that have failed for this DagRun
@@ -69,8 +69,8 @@ with DAG(
         elif len(failed_upstream_task_ids) > 0:
             send_email(
                 to=Variable.get("ETL_email_list_alerts"),
-                subject='subject',
-                html_content=generate_html(failed_upstream_task_ids),
+                subject='Airflow ' + dag_id + ' run FAILED!',
+                html_content=generate_html(failed_upstream_task_ids,dag_id),
             )
         return failed_upstream_task_ids
 
