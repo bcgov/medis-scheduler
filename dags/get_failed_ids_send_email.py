@@ -38,8 +38,8 @@ with DAG(
     tags=["etl", "notification"]
 ) as dag:
 
-    # Function to generate HTML content for email
-    def generate_html(failed_ids,dag_id):
+    # Function to generate HTML content for email in case of failure
+    def generate_failed_html(failed_ids,dag_id):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
         html_content = "<html><head></head><body><h1>Airflow %s DAG run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % (dag_id,current_time)
         for failed_id in failed_ids:
@@ -49,7 +49,15 @@ with DAG(
            Variable.get("airflow_url") + "</a></h4></body></html>"
         print(html_content)
         return html_content
+    
+    # Function to generate HTML content for email in case of success
+    def generate_success_html(dag_id):
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
+        html_content = "<html><head></head><body><h1>Airflow %s DAG run at %s succeeded</h1><p>Automatically generated message in case of success.</p></body></html>" % (dag_id,current_time)
+        print(html_content)
+        return html_content
 
+    # Function to check all previous upstream tasks and notify user if dag run results
     def get_failed_ids_send_email(ds=None, **kwargs):
         ti = kwargs['ti']
         dag_run = kwargs['dag_run']
@@ -64,13 +72,17 @@ with DAG(
         print(f"Upstream tasks that failed: {failed_upstream_task_ids}")
         # If no upstream tasks have failed, skip this task
         if len(failed_upstream_task_ids) == 0:
-            raise AirflowSkipException("No upstream tasks have failed")
+            send_email(
+                to=Variable.get("ETL_email_list_alerts"),
+                subject='Airflow ' + dag_id + ' run SUCCEEDED!',
+                html_content=generate_success_html(dag_id),
+            )
         # If there are failed upstream tasks, send an email with the failed task IDs
         elif len(failed_upstream_task_ids) > 0:
             send_email(
                 to=Variable.get("ETL_email_list_alerts"),
                 subject='Airflow ' + dag_id + ' run FAILED!',
-                html_content=generate_html(failed_upstream_task_ids,dag_id),
+                html_content=generate_failed_html(failed_upstream_task_ids,dag_id),
             )
         return failed_upstream_task_ids
 
