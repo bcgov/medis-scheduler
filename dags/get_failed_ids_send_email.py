@@ -45,7 +45,9 @@ with DAG(
         html_content = "<html><head></head><body><h1>Airflow run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % current_time
         for failed_id in failed_ids:
             html_content += f"<li>{failed_id}</li>"
-        html_content += "</ul><h4>Please access Airflow and review tasks run.</h4></body></html>"
+        html_content += "</ul><h4>Please access Airflow and review tasks run: <a href='" + \
+           Variable.get("airflow_url") + "'>" + \
+           Variable.get("airflow_url") + "</a></h4></body></html>"
         print(html_content)
         return html_content
 
