@@ -70,7 +70,7 @@ with DAG(
         failed_upstream_task_ids = upstream_task_ids.intersection(
             [task.task_id for task in failed_task_instances])
         print(f"Upstream tasks that failed: {failed_upstream_task_ids}")
-        # If no upstream tasks have failed, skip this task
+        # If no upstream tasks have failed, send an email with success message
         if len(failed_upstream_task_ids) == 0:
             send_email(
                 to=Variable.get("ETL_email_list_alerts"),
