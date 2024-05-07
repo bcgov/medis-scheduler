@@ -49,6 +49,18 @@ with DAG(
    # params={"example_key": "example_value"},
 ) as dag:
 
+    # Function to generate HTML content for email in case of failure
+    def generate_failed_html(failed_ids,dag_id):
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
+        html_content = "<html><head></head><body><h1>Airflow %s DAG run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % (dag_id,current_time)
+        for failed_id in failed_ids:
+            html_content += f"<li>{failed_id}</li>"
+        html_content += "</ul><h4>Please access Airflow and review tasks run: <a href='" + \
+           Variable.get("airflow_url") + "'>" + \
+           Variable.get("airflow_url") + "</a></h4></body></html>"
+        print(html_content)
+        return html_content
+    
     # Function to generate HTML content for email in case of success
     def generate_success_html(dag_id):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -72,7 +84,7 @@ with DAG(
         # If no upstream tasks have failed, send an email with success message
         if len(failed_upstream_task_ids) == 0:
             send_email(
-                to=Variable.get("ETL_email_list_success"),
+                to=Variable.get("ETL_email_list_alerts"),
                 subject='Airflow ' + dag_id + ' run SUCCEEDED!',
                 html_content=generate_success_html(dag_id),
             )
