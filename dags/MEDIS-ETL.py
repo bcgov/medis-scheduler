@@ -184,7 +184,7 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-        http_local_post_500_1 = BashOperator(
+    http_local_post_500_1 = BashOperator(
         task_id='http_local_post_500_1',
         bash_command='echo "Failed Task"; exit 1;',
         dag=dag,
