@@ -56,10 +56,10 @@ with DAG(
 # Function to generate HTML content for email
     def generate_html(failed_ids):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-        html_content = "<html><head></head><body><h1>Airflow run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % current_time
+        html_content = "<html><head></head><body><h1>Airflow "medis_etl" DAG run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % current_time
         for failed_id in failed_ids:
             html_content += f"<li>{failed_id}</li>"
-        html_content += "</ul><h4>Please access Airflow and review tasks run.</h4></body></html>"
+        html_content += "</ul><h4>Please access Airflow and review tasks run:<p>{{var.value.airflow_url_test}}</p></h4></body></html>"
         print(html_content)
         return html_content
 
@@ -184,6 +184,13 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
+        http_local_post_500_1 = BashOperator(
+        task_id='http_local_post_500_1',
+        bash_command='echo "Failed Task"; exit 1;',
+        dag=dag,
+    )
+
+
     start_facility_extract = EmptyOperator(
         task_id="Start_LTC_Facility_Extract",
     )
@@ -193,12 +200,14 @@ with DAG(
     start_facility_extract >> facility_viha_task >> failed_tasks_notification_1
     start_facility_extract >> facility_nha_task >> failed_tasks_notification_1
     start_facility_extract >> facility_vch_task >> failed_tasks_notification_1
+    start_facility_extract >> http_local_post_500_1 >> failed_tasks_notification_1
 
     start_facility_extract >> facility_fha_task >> start_ytd_extract
     start_facility_extract >> facility_iha_task >> start_ytd_extract
     start_facility_extract >> facility_viha_task >> start_ytd_extract
     start_facility_extract >> facility_nha_task >> start_ytd_extract
     start_facility_extract >> facility_vch_task >> start_ytd_extract
+    start_facility_extract >> http_local_post_500_1 >> start_ytd_extract
 
     start_ytd_extract >> ytd_fha_task >> failed_tasks_notification_2
     start_ytd_extract >> ytd_iha_task >> failed_tasks_notification_2
