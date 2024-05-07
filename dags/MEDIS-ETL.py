@@ -193,18 +193,31 @@ with DAG(
         task_id="Start_LTC_Facility_Extract",
     )
 
-    start_facility_extract >> facility_fha_task >> failed_tasks_notification_1 >> start_ytd_extract
-    start_facility_extract >> facility_iha_task >> failed_tasks_notification_1 >> start_ytd_extract
-    start_facility_extract >> facility_viha_task >> failed_tasks_notification_1 >> start_ytd_extract
-    start_facility_extract >> facility_nha_task >> failed_tasks_notification_1 >> start_ytd_extract
-    start_facility_extract >> facility_vch_task >> failed_tasks_notification_1 >> start_ytd_extract
+    start_facility_extract >> facility_fha_task >> failed_tasks_notification_1
+    start_facility_extract >> facility_iha_task >> failed_tasks_notification_1
+    start_facility_extract >> facility_viha_task >> failed_tasks_notification_1
+    start_facility_extract >> facility_nha_task >> failed_tasks_notification_1
+    start_facility_extract >> facility_vch_task >> failed_tasks_notification_1
 
-    start_ytd_extract >> ytd_fha_task >> failed_tasks_notification_2 >> etl_job_task
-    start_ytd_extract >> ytd_iha_task >> failed_tasks_notification_2 >> etl_job_task
-    start_ytd_extract >> ytd_viha_task >> failed_tasks_notification_2 >> etl_job_task
-    start_ytd_extract >> ytd_nha_task >> failed_tasks_notification_2 >> etl_job_task
-    start_ytd_extract >> ytd_vch_task >> failed_tasks_notification_2 >> etl_job_task
-    start_ytd_extract >> http_local_post_500_2 >> failed_tasks_notification_2 >> etl_job_task
+    start_facility_extract >> facility_fha_task >> start_ytd_extract
+    start_facility_extract >> facility_iha_task >> start_ytd_extract
+    start_facility_extract >> facility_viha_task >> start_ytd_extract
+    start_facility_extract >> facility_nha_task >> start_ytd_extract
+    start_facility_extract >> facility_vch_task >> start_ytd_extract
+
+    start_ytd_extract >> ytd_fha_task >> failed_tasks_notification_2
+    start_ytd_extract >> ytd_iha_task >> failed_tasks_notification_2
+    start_ytd_extract >> ytd_viha_task >> failed_tasks_notification_2
+    start_ytd_extract >> ytd_nha_task >> failed_tasks_notification_2
+    start_ytd_extract >> ytd_vch_task >> failed_tasks_notification_2
+    start_ytd_extract >> http_local_post_500_2 >> failed_tasks_notification_2
+
+    start_ytd_extract >> ytd_fha_task >> etl_job_task
+    start_ytd_extract >> ytd_iha_task >> etl_job_task
+    start_ytd_extract >> ytd_viha_task >> etl_job_task
+    start_ytd_extract >> ytd_nha_task >> etl_job_task
+    start_ytd_extract >> ytd_vch_task >> etl_job_task
+    start_ytd_extract >> http_local_post_500_2 >> etl_job_task
 
 
     #delay_5s_task = BashOperator(
