@@ -212,17 +212,17 @@ with DAG(
 
 
   
-    start_pcd_extract_1 >> status_tracker_task >> start_pcd_extract_2
-    start_pcd_extract_1 >> financial_expense_task >> start_pcd_extract_2
-    start_pcd_extract_1 >> upcc_financial_reporting_task >> start_pcd_extract_2
-    start_pcd_extract_1 >> chc_financial_reporting_task >> start_pcd_extract_2
-    start_pcd_extract_1 >> pcn_financial_reporting_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> status_tracker_task >> etl_job_task
+    start_pcd_extract_1 >> financial_expense_task >> etl_job_task
+    start_pcd_extract_1 >> upcc_financial_reporting_task >> etl_job_task
+    start_pcd_extract_1 >> chc_financial_reporting_task >> etl_job_task
+    start_pcd_extract_1 >> pcn_financial_reporting_task >> etl_job_task
 
-    start_pcd_extract_2 >> decision_log_task >> etl_job_task
-    start_pcd_extract_2 >> ha_hierarchy_task >> etl_job_task
-    start_pcd_extract_2 >> upcc_budget_task >> etl_job_task
-    start_pcd_extract_2 >> chc_budget_task >> etl_job_task
-    start_pcd_extract_2 >> pcn_budget_task >> etl_job_task
+    start_pcd_extract_1 >> decision_log_task >> etl_job_task
+    start_pcd_extract_1 >> ha_hierarchy_task >> etl_job_task
+    start_pcd_extract_1 >> upcc_budget_task >> etl_job_task
+    start_pcd_extract_1 >> chc_budget_task >> etl_job_task
+    start_pcd_extract_1 >> pcn_budget_task >> etl_job_task
 
 
    # start_facility_extract >> http_local_post_500_1 >> start_ytd_extract
