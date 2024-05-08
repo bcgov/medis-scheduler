@@ -110,9 +110,9 @@ with DAG(
         task_id="Start_PCD_Extract_1",
     )
 
-    start_pcd_extract_2 = EmptyOperator(
-        task_id="Start_PCD_Extract_2",
-    )
+    # start_pcd_extract_2 = EmptyOperator(
+    #     task_id="Start_PCD_Extract_2",
+    # )
 
     financial_expense_task = HttpOperator(
         task_id='Financial_Expense',
