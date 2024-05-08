@@ -141,14 +141,14 @@ with DAG(
         headers={"Content-Type": "application/json"},
     ) 
 
-    pcn_financial_reporting_task = HttpOperator(
-        task_id='PCN_Financial_Reporting',
-        method='POST',
-        endpoint='{{var.value.pcd_pcn_financial_reporting_url}}',
-        response_check=lambda response: response.json()["statusCode"]==200,
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
-        headers={"Content-Type": "application/json"},
-    )
+    # pcn_financial_reporting_task = HttpOperator(
+    #     task_id='PCN_Financial_Reporting',
+    #     method='POST',
+    #     endpoint='{{var.value.pcd_pcn_financial_reporting_url}}',
+    #     response_check=lambda response: response.json()["statusCode"]==200,
+    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+    #     headers={"Content-Type": "application/json"},
+    # )
 
     status_tracker_task = HttpOperator(
         task_id='Status_Tracker',
@@ -159,14 +159,14 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
   
-    decision_log_task = HttpOperator(
-        task_id='Decision_Log',
-        method='POST',
-        endpoint='{{var.value.pcd_decision_log_url}}',
-        response_check=lambda response: response.json()["statusCode"]==200,
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
-        headers={"Content-Type": "application/json"},
-    )
+    # decision_log_task = HttpOperator(
+    #     task_id='Decision_Log',
+    #     method='POST',
+    #     endpoint='{{var.value.pcd_decision_log_url}}',
+    #     response_check=lambda response: response.json()["statusCode"]==200,
+    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+    #     headers={"Content-Type": "application/json"},
+    # )
 
     ha_hierarchy_task = HttpOperator(
         task_id='HA_Hierarchy',
@@ -216,9 +216,9 @@ with DAG(
     start_pcd_extract_1 >> financial_expense_task >> etl_job_task
     start_pcd_extract_1 >> upcc_financial_reporting_task >> etl_job_task
     start_pcd_extract_1 >> chc_financial_reporting_task >> etl_job_task
-    start_pcd_extract_1 >> pcn_financial_reporting_task >> etl_job_task
+#    start_pcd_extract_1 >> pcn_financial_reporting_task >> etl_job_task
 
-    start_pcd_extract_1 >> decision_log_task >> etl_job_task
+#    start_pcd_extract_1 >> decision_log_task >> etl_job_task
     start_pcd_extract_1 >> ha_hierarchy_task >> etl_job_task
     start_pcd_extract_1 >> upcc_budget_task >> etl_job_task
     start_pcd_extract_1 >> chc_budget_task >> etl_job_task
