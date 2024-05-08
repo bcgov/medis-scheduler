@@ -110,7 +110,7 @@ with DAG(
         task_id="Start_PCD_Extract_1",
     )
 
-    start_pcd_extract_2 = EmptyOperator(
+"""     start_pcd_extract_2 = EmptyOperator(
         task_id="Start_PCD_Extract_2",
     )
 
@@ -144,7 +144,7 @@ with DAG(
         endpoint='{{var.value.pcd_pcn_financial_reporting_url}}',
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
-    )
+    ) """
 
     status_tracker_task = HttpOperator(
         task_id='Status_Tracker',
@@ -154,7 +154,7 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
   
-    decision_log_task = HttpOperator(
+"""     decision_log_task = HttpOperator(
         task_id='Decision_Log',
         method='POST',
         endpoint='{{var.value.pcd_decision_log_url}}',
@@ -193,7 +193,7 @@ with DAG(
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     )
-
+ """
    # http_local_post_500_1 = BashOperator(
    #     task_id='http_local_post_500_1',
    #     bash_command='echo "Failed Task"; exit 1;',
