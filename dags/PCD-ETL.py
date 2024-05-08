@@ -104,7 +104,7 @@ with DAG(
     )
 
     failed_tasks_notification = PythonOperator(
-        task_id="Failed_Tasks_Notification", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
+        task_id="ETL_Notification", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
 
     start_pcd_extract_1 = EmptyOperator(
         task_id="Start_PCD_Extract_1",
