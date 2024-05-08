@@ -150,6 +150,7 @@ with DAG(
         task_id='Status_Tracker',
         method='POST',
         endpoint='{{var.value.pcd_status_tracker_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
     )
