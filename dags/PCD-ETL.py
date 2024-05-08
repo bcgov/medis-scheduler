@@ -110,41 +110,45 @@ with DAG(
         task_id="Start_PCD_Extract_1",
     )
 
-    # start_pcd_extract_2 = EmptyOperator(
-    #     task_id="Start_PCD_Extract_2",
-    # )
+    start_pcd_extract_2 = EmptyOperator(
+        task_id="Start_PCD_Extract_2",
+    )
 
-    # financial_expense_task = HttpOperator(
-    #     task_id='Financial_Expense',
-    #     method='POST',
-    #     endpoint='{{var.value.pcd_financial_expense_url}}',
-    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
-    #     headers={"Content-Type": "application/json"},
-    # )
+    financial_expense_task = HttpOperator(
+        task_id='Financial_Expense',
+        method='POST',
+        endpoint='{{var.value.pcd_financial_expense_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
 
-    # upcc_financial_reporting_task = HttpOperator(
-    #     task_id='UPCC_Financial_Reportingr',
-    #     method='POST',
-    #     endpoint='{{var.value.pcd_upcc_budget_url}}',
-    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
-    #     headers={"Content-Type": "application/json"},
-    # )
+    upcc_financial_reporting_task = HttpOperator(
+        task_id='UPCC_Financial_Reportingr',
+        method='POST',
+        endpoint='{{var.value.pcd_upcc_budget_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
     
-    # chc_financial_reporting_task = HttpOperator(
-    #     task_id='CHC_Financial_reporting',
-    #     method='POST',
-    #     endpoint='{{var.value.pcd_chc_financial_reporting_url}}',
-    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
-    #     headers={"Content-Type": "application/json"},
-    # ) 
+    chc_financial_reporting_task = HttpOperator(
+        task_id='CHC_Financial_reporting',
+        method='POST',
+        endpoint='{{var.value.pcd_chc_financial_reporting_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    ) 
 
-    # pcn_financial_reporting_task = HttpOperator(
-    #     task_id='PCN_Financial_Reporting',
-    #     method='POST',
-    #     endpoint='{{var.value.pcd_pcn_financial_reporting_url}}',
-    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
-    #     headers={"Content-Type": "application/json"},
-    # )
+    pcn_financial_reporting_task = HttpOperator(
+        task_id='PCN_Financial_Reporting',
+        method='POST',
+        endpoint='{{var.value.pcd_pcn_financial_reporting_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
 
     status_tracker_task = HttpOperator(
         task_id='Status_Tracker',
@@ -155,55 +159,71 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
   
-    # decision_log_task = HttpOperator(
-    #     task_id='Decision_Log',
-    #     method='POST',
-    #     endpoint='{{var.value.pcd_decision_log_url}}',
-    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
-    #     headers={"Content-Type": "application/json"},
-    # )
+    decision_log_task = HttpOperator(
+        task_id='Decision_Log',
+        method='POST',
+        endpoint='{{var.value.pcd_decision_log_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
 
-    # ha_hierarchy_task = HttpOperator(
-    #     task_id='HA_Hierarchy',
-    #     method='POST',
-    #     endpoint='{{var.value.pcd_ha_hierarchy_url}}',
-    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
-    #     headers={"Content-Type": "application/json"},
-    # )
+    ha_hierarchy_task = HttpOperator(
+        task_id='HA_Hierarchy',
+        method='POST',
+        endpoint='{{var.value.pcd_ha_hierarchy_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
 
-    # upcc_budget_task = HttpOperator(
-    #     task_id='UPPC_Budget',
-    #     method='POST',
-    #     endpoint='{{var.value.pcd_upcc_budget_url}}',
-    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
-    #     headers={"Content-Type": "application/json"},
-    # ) 
+    upcc_budget_task = HttpOperator(
+        task_id='UPPC_Budget',
+        method='POST',
+        endpoint='{{var.value.pcd_upcc_budget_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    ) 
 
-    # chc_budget_task = HttpOperator(
-    #     task_id='CHC_Budget',
-    #     method='POST',
-    #     endpoint='{{var.value.pcd_chc_budget_url}}',
-    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
-    #     headers={"Content-Type": "application/json"},
-    # )
+    chc_budget_task = HttpOperator(
+        task_id='CHC_Budget',
+        method='POST',
+        endpoint='{{var.value.pcd_chc_budget_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
 
-    # pcn_budget_task = HttpOperator(
-    #     task_id='PCN_Budget',
-    #     method='POST',
-    #     endpoint='{{var.value.pcd_pcn_budget_url}}',
-    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
-    #     headers={"Content-Type": "application/json"},
-    # )
+    pcn_budget_task = HttpOperator(
+        task_id='PCN_Budget',
+        method='POST',
+        endpoint='{{var.value.pcd_pcn_budget_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
 
-   # http_local_post_500_1 = BashOperator(
-   #     task_id='http_local_post_500_1',
-   #     bash_command='echo "Failed Task"; exit 1;',
-   #     dag=dag,
-   # )
+#    http_local_post_500_1 = BashOperator(
+#        task_id='http_local_post_500_1',
+#        bash_command='echo "Failed Task"; exit 1;',
+#        dag=dag,
+#    )
 
 
   
     start_pcd_extract_1 >> status_tracker_task >> etl_job_task
+    start_pcd_extract_1 >> financial_expense_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> upcc_financial_reporting_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> chc_financial_reporting_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> pcn_financial_reporting_task >> start_pcd_extract_2
+
+    start_pcd_extract_2 >> decision_log_task >> etl_job_task
+    start_pcd_extract_2 >> ha_hierarchy_task >> etl_job_task
+    start_pcd_extract_2 >> upcc_budget_task >> etl_job_task
+    start_pcd_extract_2 >> chc_budget_task >> etl_job_task
+    start_pcd_extract_2 >> pcn_budget_task >> etl_job_task
+
 
    # start_facility_extract >> http_local_post_500_1 >> start_ytd_extract
 
