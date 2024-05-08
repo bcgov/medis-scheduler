@@ -212,7 +212,7 @@ with DAG(
 
 
   
-    start_pcd_extract_1 >> status_tracker_task >> etl_job_task
+    start_pcd_extract_1 >> status_tracker_task >> start_pcd_extract_2
     start_pcd_extract_1 >> financial_expense_task >> start_pcd_extract_2
     start_pcd_extract_1 >> upcc_financial_reporting_task >> start_pcd_extract_2
     start_pcd_extract_1 >> chc_financial_reporting_task >> start_pcd_extract_2
