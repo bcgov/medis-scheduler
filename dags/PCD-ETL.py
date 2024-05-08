@@ -52,19 +52,19 @@ with DAG(
     # Function to generate HTML content for email in case of failure
     def generate_failed_html(failed_ids,dag_id):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-        html_content = "<html><head></head><body><h1>Airflow %s DAG run at %s failed</h1><p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % (dag_id,current_time)
+        html_content = "<html><head></head><body>Airflow %s DAG run at %s failed<p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % (dag_id,current_time)
         for failed_id in failed_ids:
             html_content += f"<li>{failed_id}</li>"
-        html_content += "</ul><h4>Please access Airflow and review tasks run: <a href='" + \
+        html_content += "</ul>Please access Airflow and review tasks run: <a href='" + \
            Variable.get("airflow_url") + "'>" + \
-           Variable.get("airflow_url") + "</a></h4></body></html>"
+           Variable.get("airflow_url") + "</a></body></html>"
         print(html_content)
         return html_content
     
     # Function to generate HTML content for email in case of success
     def generate_success_html(dag_id):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-        html_content = "<html><head></head><body><h1>Airflow %s DAG run at %s succeeded</h1><p>Automatically generated message in case of success.</p></body></html>" % (dag_id,current_time)
+        html_content = "<html><head></head><body>Airflow %s DAG run at %s succeeded<p>Automatically generated message in case of success.</p></body></html>" % (dag_id,current_time)
         print(html_content)
         return html_content
 
