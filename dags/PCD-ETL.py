@@ -216,9 +216,9 @@ with DAG(
     start_pcd_extract_1 >> financial_expense_task >> etl_job_task
     start_pcd_extract_1 >> upcc_financial_reporting_task >> etl_job_task
     start_pcd_extract_1 >> chc_financial_reporting_task >> etl_job_task
-#    start_pcd_extract_1 >> pcn_financial_reporting_task >> etl_job_task
+    start_pcd_extract_1 >> pcn_financial_reporting_task >> etl_job_task
 
-#    start_pcd_extract_1 >> decision_log_task >> etl_job_task
+    start_pcd_extract_1 >> decision_log_task >> etl_job_task
     start_pcd_extract_1 >> ha_hierarchy_task >> etl_job_task
     start_pcd_extract_1 >> upcc_budget_task >> etl_job_task
     start_pcd_extract_1 >> chc_budget_task >> etl_job_task
