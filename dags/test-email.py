@@ -43,7 +43,7 @@ with DAG(
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
     dagrun_timeout=datetime.timedelta(minutes=60),
-    tags=["example", "example2"],
+    tags=["example", "example2","etl"],
     params={"example_key": "example_value"},
 ) as dag:
 
