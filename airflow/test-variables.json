@@ -1,0 +1,20 @@
+{
+    "ETL_email_list_alerts": "tatiana.pluzhnikova@cgi.com,brian.pham@cgi.com",
+    "ETL_email_list_success": "tatiana.pluzhnikova@cgi.com,brian.pham@cgi.com,tatiana@pluzhnikov.net",
+    "PCD_ETL_email_list_success": "tatiana.pluzhnikova@cgi.com,brian.pham@cgi.com,wesley.kubo@cgi.com,jackie.cushing@gov.bc.ca,andrea.frost@gov.bc.ca,david.arnatt@gov.bc.ca,janelle.gaba@gov.bc.ca,rob.cowandouglas@gov.bc.ca",
+    "airflow_url": "https://airflow-webserver-c2da03-test.apps.silver.devops.gov.bc.ca/",
+    "facility_information_url": "medis-etl-app:8081/ltc/facility-information",
+    "medis_job": "/opt/airflow/dags/repo/dags/airflow.app.job.yaml",
+    "pcd_chc_budget_url": "medis-etl-app:8081/pcd/chc-budget",
+    "pcd_chc_financial_reporting_url": "medis-etl-app:8081/pcd/chc-financial-reporting",
+    "pcd_decision_log_url": "medis-etl-app:8081/pcd/decision-log",
+    "pcd_financial_expense_url": "medis-etl-app:8081/pcd/financial-expense",
+    "pcd_ha_hierarchy_url": "medis-etl-app:8081/pcd/ha-hierarchy",
+    "pcd_job": "/opt/airflow/dags/repo/dags/pcd.airflow.app.job.yaml",
+    "pcd_pcn_budget_url": "medis-etl-app:8081/pcd/pcn-budget",
+    "pcd_pcn_financial_reporting_url": "medis-etl-app:8081/pcd/pcn-financial-reporting",
+    "pcd_status_tracker_url": "medis-etl-app:8081/pcd/status-tracker",
+    "pcd_upcc_budget_url": "medis-etl-app:8081/pcd/upcc-budget",
+    "pcd_upcc_financial_reporting_url": "medis-etl-app:8081/pcd/upcc-financial-reporting",
+    "quarterly_ytd_url": "medis-etl-app:8081/ltc-quarterly-ytd"
+}

@@ -84,7 +84,7 @@ with DAG(
         # If no upstream tasks have failed, send an email with success message
         if len(failed_upstream_task_ids) == 0:
             send_email(
-                to=Variable.get("ETL_email_list_success"),
+                to=Variable.get("PCD_ETL_email_list_success"),
                 subject='Airflow ' + dag_id + ' run SUCCEEDED!',
                 html_content=generate_success_html(dag_id),
             )
