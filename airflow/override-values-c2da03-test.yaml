@@ -1,0 +1,98 @@
+uid: 1014620001
+gid: 1014620001
+
+securityContext:
+  supplementalGroups: [1000660001]
+
+workers:
+  persistence:
+    size: 5Gi
+  resources:
+    limits:
+      memory: 4Gi  
+
+webserver:
+  resources:
+    limits:
+      cpu: 300m
+      memory: 2Gi
+    requests:
+      cpu: 150m
+      memory: 1Gi
+  livenessProbe:
+    initialDelaySeconds: 60
+  readinessProbe:
+    initialDelaySeconds: 60
+  startupProbe:
+    failureThreshold: 12
+
+git-sync:
+  resources:
+    limits:
+      cpu: 100m
+    requests:
+      cpu: 50m
+
+scheduler-log-groomer:
+  resources:
+    limits:
+      cpu: 100m
+
+scheduler:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 150m
+      memory: 256Mi
+
+
+triggerer:
+  persistence:
+    size: 5Gi
+
+statsd:
+  uid: 1014620002
+
+pgbouncer:
+  uid: 1014620002
+
+redis:
+  uid: 1014620006
+  securityContext:
+    supplementalGroups: [1000660002]
+
+dags:
+  persistence:
+    size: 5Gi
+  gitSync:
+    enabled: true
+    uid: 1014620004
+    repo: https://github.com/bcgov/medis-scheduler.git
+    branch: test
+    subPath: "dags"
+
+postgresql:
+  primary:
+    containerSecurityContext:
+      runAsUser: 1014620003
+  readReplicas:
+    containerSecurityContext:
+      runAsUser: 1014620003
+  backup:
+    cronjob:
+      containerSecurityContext:
+        runAsUser: 1014620003
+     
+
+config:
+  webserver:
+    expose_config: 'True'  # by default this is 'False'
+
+  smtp:
+    smtp_host: apps.smtp.gov.bc.ca  # befoult 'localhost'
+    smtp_mail_from: airflow@gov.bc.ca # default 'airflow@example.com'
+
+
+  
