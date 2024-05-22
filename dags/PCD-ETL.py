@@ -52,7 +52,7 @@ with DAG(
     # Function to generate HTML content for email in case of failure
     def generate_failed_html(failed_ids,dag_id):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-        html_content = "<html><head></head><body>Airflow %s DAG run at %s failed<p>Automatically generated message in case of failure.</p><h2>Failed Task IDs</h2><ul>" % (dag_id,current_time)
+        html_content = "<html><head></head><body>Airflow %s DAG run at %s failed<p>Automatically generated message in case of failure.</p><b>Failed Task IDs</b><ul>" % (dag_id,current_time)
         for failed_id in failed_ids:
             html_content += f"<li>{failed_id}</li>"
         html_content += "</ul>Please access Airflow and review tasks run: <a href='" + \
@@ -84,7 +84,7 @@ with DAG(
         # If no upstream tasks have failed, send an email with success message
         if len(failed_upstream_task_ids) == 0:
             send_email(
-                to=Variable.get("ETL_email_list_success"),
+                to=Variable.get("PCD_ETL_email_list_success"),
                 subject='Airflow ' + dag_id + ' run SUCCEEDED!',
                 html_content=generate_success_html(dag_id),
             )
@@ -110,9 +110,9 @@ with DAG(
         task_id="Start_PCD_Extract_1",
     )
 
-    # start_pcd_extract_2 = EmptyOperator(
-    #     task_id="Start_PCD_Extract_2",
-    # )
+    start_pcd_extract_2 = EmptyOperator(
+        task_id="Start_PCD_Extract_2",
+    )
 
     financial_expense_task = HttpOperator(
         task_id='Financial_Expense',
@@ -141,14 +141,14 @@ with DAG(
         headers={"Content-Type": "application/json"},
     ) 
 
-    # pcn_financial_reporting_task = HttpOperator(
-    #     task_id='PCN_Financial_Reporting',
-    #     method='POST',
-    #     endpoint='{{var.value.pcd_pcn_financial_reporting_url}}',
-    #     response_check=lambda response: response.json()["statusCode"]==200,
-    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
-    #     headers={"Content-Type": "application/json"},
-    # )
+    pcn_financial_reporting_task = HttpOperator(
+        task_id='PCN_Financial_Reporting',
+        method='POST',
+        endpoint='{{var.value.pcd_pcn_financial_reporting_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
 
     status_tracker_task = HttpOperator(
         task_id='Status_Tracker',
@@ -159,14 +159,14 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
   
-    # decision_log_task = HttpOperator(
-    #     task_id='Decision_Log',
-    #     method='POST',
-    #     endpoint='{{var.value.pcd_decision_log_url}}',
-    #     response_check=lambda response: response.json()["statusCode"]==200,
-    #     data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
-    #     headers={"Content-Type": "application/json"},
-    # )
+    decision_log_task = HttpOperator(
+        task_id='Decision_Log',
+        method='POST',
+        endpoint='{{var.value.pcd_decision_log_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
 
     ha_hierarchy_task = HttpOperator(
         task_id='HA_Hierarchy',
@@ -212,17 +212,17 @@ with DAG(
 
 
   
-    start_pcd_extract_1 >> status_tracker_task >> etl_job_task
-    start_pcd_extract_1 >> financial_expense_task >> etl_job_task
-    start_pcd_extract_1 >> upcc_financial_reporting_task >> etl_job_task
-    start_pcd_extract_1 >> chc_financial_reporting_task >> etl_job_task
-#    start_pcd_extract_1 >> pcn_financial_reporting_task >> etl_job_task
+    start_pcd_extract_1 >> status_tracker_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> financial_expense_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> upcc_financial_reporting_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> chc_financial_reporting_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> pcn_financial_reporting_task >> start_pcd_extract_2
 
-#    start_pcd_extract_1 >> decision_log_task >> etl_job_task
-    start_pcd_extract_1 >> ha_hierarchy_task >> etl_job_task
-    start_pcd_extract_1 >> upcc_budget_task >> etl_job_task
-    start_pcd_extract_1 >> chc_budget_task >> etl_job_task
-    start_pcd_extract_1 >> pcn_budget_task >> etl_job_task
+    start_pcd_extract_2 >> decision_log_task >> etl_job_task
+    start_pcd_extract_2 >> ha_hierarchy_task >> etl_job_task
+    start_pcd_extract_2 >> upcc_budget_task >> etl_job_task
+    start_pcd_extract_2 >> chc_budget_task >> etl_job_task
+    start_pcd_extract_2 >> pcn_budget_task >> etl_job_task
 
 
    # start_facility_extract >> http_local_post_500_1 >> start_ytd_extract
