@@ -31,8 +31,8 @@ This command uses the downloaded helm-chart for installation and the default set
 
 ### Airflow configuration
 1.	Airflow can be accessed at [https://airflow-webserver-c2da03-test.apps.silver.devops.gov.bc.ca/] and [https://airflow-webserver-c2da03-prod.apps.silver.devops.gov.bc.ca/]  
-2.	The DAGs are stored in GitHab  (medis-scheduler/dags at main · bcgov/medis-scheduler (github.com) and being synced to Airflow every 10 seconds from test branch to test Airflow and from main branch to prod Airflow. 
-(We are trying to do changes it test brunch first then do pull request to main branch)
+2.	The DAGs are stored in GitHub  (medis-scheduler/dags at main · bcgov/medis-scheduler (github.com)) and being synced to Airflow every 10 seconds from test branch to test Airflow and from main branch to prod Airflow. 
+(We try to do changes it test branch first then do pull request to main branch)
 3.	We use Airflow Variables for more flexibility, so some parameters can be modified without touching the DAGs. The variables can be exported and imported to/from json format file and we keep them in GitHub [https://github.com/bcgov/medis-scheduler/tree/6ef9eb0d6c5d61751b796123ae13484d29ca9de8/airflow]
 
 ### Airflow PCD-ETL and MEDIS-ETL DAGs description.
