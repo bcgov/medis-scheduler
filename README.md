@@ -12,16 +12,6 @@ Copy oc command with the token to login and run it from your laptop. (Laptop sho
 The example of your command:
 oc login --token=sha256~yxiCAMwFD_XXX --server=https://api.silver.devops.gov.bc.ca:6443
 Logged into [https://api.silver.devops.gov.bc.ca:6443] as "username@github" using the token provided.
-
-You have access to the following projects and can switch between them with 'oc project <projectname>':
-
-    c2da03-dev
-  * c2da03-prod
-    c2da03-test
-    c2da03-tools
-
-Using project "c2da03-prod".
-
 2.	Choose the project you going to deploy or upgrade Airflow to.
 3.	Run the helm command to install/upgrade Airflow:
 helm.exe upgrade --install airflow C:\path-to-helm-chart\helm-v3.14.3-windows-amd64\windows-amd64\airflow-1.13.0\airflow-1.13.0\airflow --namespace c2da03-test -f C:\Users\tatiana.pluzhnikova\Downloads\helm-v3.14.3-windows-amd64\windows-amd64\airflow-1.13.0\airflow-1.13.0\airflow\override-values-c2da03-test.yaml
