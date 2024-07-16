@@ -204,13 +204,18 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
+    check_pcd_folder_task = KubernetesJobOperator(
+        task_id='Check_PCD_Shared_Folder',
+        job_template_file='{{var.value.pcd_emtydir_job}}',
+    )
+
 #    http_local_post_500_1 = BashOperator(
 #        task_id='http_local_post_500_1',
 #        bash_command='echo "Failed Task"; exit 1;',
 #        dag=dag,
 #    )
 
-
+    check_pcd_folder_task >> start_pcd_extract_1
   
     start_pcd_extract_1 >> status_tracker_task >> start_pcd_extract_2
     start_pcd_extract_1 >> financial_expense_task >> start_pcd_extract_2
