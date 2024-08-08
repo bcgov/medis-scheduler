@@ -206,7 +206,6 @@ with DAG(
     namespace="default",
     image="perl:5.34.0",
     cmds=["perl", "-Mbignum=bpi", "-wle", "print bpi(2000)"],
-    name=JOB_NAME + "-def",
     wait_until_job_complete=True,
     deferrable=True,
     )
