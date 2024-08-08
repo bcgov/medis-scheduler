@@ -32,6 +32,8 @@ from airflow.providers.http.operators.http import HttpOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.providers.cncf.kubernetes.callbacks import KubernetesPodOperatorCallback
 from airflow.providers.cncf.kubernetes.operators.job import KubernetesJobOperator
+from airflow.providers.cncf.kubernetes.triggers.job import KubernetesJobTrigger
+from airflow.providers.cncf.kubernetes.hooks.kubernetes import KubernetesHook
 from airflow.operators.python_operator import PythonOperator
 from airflow.exceptions import AirflowSkipException
 from airflow.utils.email import send_email
@@ -199,15 +201,7 @@ with DAG(
     check_ltc_folder_task = KubernetesJobOperator(
         task_id='Check_LTC_Shared_Folder',
         job_template_file='{{var.value.medis_emtydir_job}}',
-    )
-
-    k8s_job_def = KubernetesJobOperator(
-    task_id="job-task-def",
-    namespace="default",
-    image="perl:5.34.0",
-    cmds=["perl", "-Mbignum=bpi", "-wle", "print bpi(2000)"],
-    wait_until_job_complete=True,
-    deferrable=True,
+        wait_until_job_complete=True,
     )
 
     start_facility_extract = EmptyOperator(
