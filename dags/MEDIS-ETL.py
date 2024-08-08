@@ -199,7 +199,7 @@ with DAG(
     check_ltc_folder_task = KubernetesJobOperator(
         task_id='Check_LTC_Shared_Folder',
         job_template_file='{{var.value.medis_emtydir_job}}',
-        deferrable=True,
+        wait_for_completion=True,
     )
 
     start_facility_extract = EmptyOperator(
