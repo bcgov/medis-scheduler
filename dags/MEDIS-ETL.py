@@ -199,8 +199,16 @@ with DAG(
     check_ltc_folder_task = KubernetesJobOperator(
         task_id='Check_LTC_Shared_Folder',
         job_template_file='{{var.value.medis_emtydir_job}}',
-        wait_until_job_complete=True,
-        job_pool_interval=10,
+    )
+
+    k8s_job_def = KubernetesJobOperator(
+    task_id="job-task-def",
+    namespace="default",
+    image="perl:5.34.0",
+    cmds=["perl", "-Mbignum=bpi", "-wle", "print bpi(2000)"],
+    name=JOB_NAME + "-def",
+    wait_until_job_complete=True,
+    deferrable=True,
     )
 
     start_facility_extract = EmptyOperator(
