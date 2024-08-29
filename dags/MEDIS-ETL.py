@@ -197,9 +197,9 @@ with DAG(
    #     dag=dag,
    # )
 
-    check_ltc_folder_task = KubernetesJobOperator(
-        task_id='Check_LTC_Shared_Folder',
-        job_template_file='{{var.value.medis_emtydir_job}}',
+   # check_ltc_folder_task = KubernetesJobOperator(
+   #     task_id='Check_LTC_Shared_Folder',
+   #     job_template_file='{{var.value.medis_emtydir_job}}',
     #    wait_until_job_complete=True,
     )
 
@@ -207,7 +207,7 @@ with DAG(
         task_id="Start_LTC_Facility_Extract",
     )
 
-    check_ltc_folder_task >> start_facility_extract
+   # check_ltc_folder_task >> start_facility_extract
     
     start_facility_extract >> facility_fha_task >> start_ytd_extract
     start_facility_extract >> facility_iha_task >> start_ytd_extract
