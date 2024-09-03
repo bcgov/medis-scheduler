@@ -102,6 +102,7 @@ with DAG(
     etl_job_task = KubernetesJobOperator(
         task_id='MEDIS_file_upload',
         job_template_file='{{var.value.medis_job}}',
+        wait_until_job_complete=True,
     )
 
     failed_tasks_notification = PythonOperator(
