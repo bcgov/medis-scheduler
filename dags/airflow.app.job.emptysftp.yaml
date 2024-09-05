@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - image: image-registry.openshift-image-registry.svc:5000/c2da03-tools/medis-sftp-image:latest
-        name: empty
+        name: emptysftp
         resources:
           limits:
             cpu: 100m
@@ -37,9 +37,18 @@ spec:
         - "sh"
         - "-c"
         - "/app/bin/emptysftp.sh"
+        envFrom:
+          - configMapRef:
+              name: medis-sftp-config-env
         volumeMounts:
         - name: medis-data-vol
           mountPath: /data
+        - name: ssh-known-hosts
+          mountPath: /ssh-config
+          readOnly: true
+        - name: ssh-key
+          mountPath: /ssh-hi
+          readOnly: true
         - name: sftp-bin
           mountPath: /app/bin
           readOnly: true
@@ -47,8 +56,15 @@ spec:
       - name: medis-data-vol
         persistentVolumeClaim:
           claimName: medis-etl-pvc
+      - name: ssh-known-hosts
+        configMap:
+          name: medis-sftp-config
       - name: sftp-bin
         configMap:
           name: medis-sftp-bin
           defaultMode: 0777
+      - name: ssh-key
+        secret:
+          secretName: medis-sftp-secret
+          defaultMode: 400
       restartPolicy: Never
