@@ -36,7 +36,7 @@ spec:
         command:
         - "sh"
         - "-c"
-        - "/app/bin/emptysftp.sh"
+        - "/app/bin/emptys.sh"
         envFrom:
           - configMapRef:
               name: medis-sftp-config-env
