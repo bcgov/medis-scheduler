@@ -15,7 +15,7 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-"""Example DAG demonstrating the usage of the BashOperator."""
+
 from __future__ import annotations
 
 import datetime
@@ -209,13 +209,13 @@ with DAG(
         job_template_file='{{var.value.pcd_emtydir_job}}',
     )
 
-#    http_local_post_500_1 = BashOperator(
-#        task_id='http_local_post_500_1',
-#        bash_command='echo "Failed Task"; exit 1;',
-#        dag=dag,
-#    )
+        check_pcd_sftp_folder_task = KubernetesJobOperator(
+        task_id='Check_LTC_SFTP_Folder',
+        job_template_file='{{var.value.pcd_emtysftp_job}}',
+        wait_until_job_complete=True,
+    )
 
-    check_pcd_folder_task >> start_pcd_extract_1
+    check_pcd_sftp_folder_task >> check_pcd_folder_task >> start_pcd_extract_1
   
     start_pcd_extract_1 >> status_tracker_task >> start_pcd_extract_2
     start_pcd_extract_1 >> financial_expense_task >> start_pcd_extract_2
@@ -229,8 +229,6 @@ with DAG(
     start_pcd_extract_2 >> chc_budget_task >> etl_job_task
     start_pcd_extract_2 >> pcn_budget_task >> etl_job_task
 
-
-   # start_facility_extract >> http_local_post_500_1 >> start_ytd_extract
 
     etl_job_task >> failed_tasks_notification
 
