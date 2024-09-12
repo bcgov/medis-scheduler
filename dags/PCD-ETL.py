@@ -209,8 +209,8 @@ with DAG(
         job_template_file='{{var.value.pcd_emtydir_job}}',
     )
 
-        check_pcd_sftp_folder_task = KubernetesJobOperator(
-        task_id='Check_LTC_SFTP_Folder',
+    check_pcd_sftp_folder_task = KubernetesJobOperator(
+        task_id='Check_PCD_SFTP_Folder',
         job_template_file='{{var.value.pcd_emtysftp_job}}',
         wait_until_job_complete=True,
     )
