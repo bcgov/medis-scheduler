@@ -1,0 +1,70 @@
+---
+
+# A minimal OpenShift template
+# to create a BusyBox container with
+# a volume claim that can be used to
+# launch a Job and inspect a PVC.
+#
+# Create with:
+#   oc process -p PVC_CLAIM_NAME=my-claim -f busy-job.yaml | oc create -f -
+# Destroy with:
+#   oc delete job --selector template=busy-job
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: medis-emptysftp-job-airflow-once
+spec:
+  parallelism: 1
+  completions: 1
+  activeDeadlineSeconds: 600
+  backoffLimit: 1
+  selector:
+    name: medis-emptysftp-job
+  template:
+    metadata:
+      labels:
+        name: emptysftp-job
+    spec:
+      containers:
+      - image: image-registry.openshift-image-registry.svc:5000/c2da03-tools/medis-sftp-image:latest
+        name: emptysftp
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+        command:
+        - "sh"
+        - "-c"
+        - "/app/bin/emptysftp.sh"
+        envFrom:
+          - configMapRef:
+              name: medis-sftp-config-env
+        volumeMounts:
+        - name: medis-data-vol
+          mountPath: /data
+        - name: ssh-known-hosts
+          mountPath: /ssh-config
+          readOnly: true
+        - name: ssh-key
+          mountPath: /ssh-hi
+          readOnly: true
+        - name: sftp-bin
+          mountPath: /app/bin
+          readOnly: true
+      volumes:
+      - name: medis-data-vol
+        persistentVolumeClaim:
+          claimName: medis-etl-pvc
+      - name: ssh-known-hosts
+        configMap:
+          name: medis-sftp-config
+      - name: sftp-bin
+        configMap:
+          name: medis-sftp-bin
+          defaultMode: 0777
+      - name: ssh-key
+        secret:
+          secretName: medis-sftp-secret
+          defaultMode: 400
+      restartPolicy: Never

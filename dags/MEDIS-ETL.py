@@ -15,7 +15,8 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-"""Example DAG demonstrating the usage of the BashOperator."""
+
+
 from __future__ import annotations
 
 import datetime
@@ -32,6 +33,7 @@ from airflow.providers.http.operators.http import HttpOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.providers.cncf.kubernetes.callbacks import KubernetesPodOperatorCallback
 from airflow.providers.cncf.kubernetes.operators.job import KubernetesJobOperator
+from airflow.providers.cncf.kubernetes.hooks.kubernetes import KubernetesHook
 from airflow.operators.python_operator import PythonOperator
 from airflow.exceptions import AirflowSkipException
 from airflow.utils.email import send_email
@@ -101,6 +103,7 @@ with DAG(
     etl_job_task = KubernetesJobOperator(
         task_id='MEDIS_file_upload',
         job_template_file='{{var.value.medis_job}}',
+        wait_until_job_complete=True,
     )
 
     failed_tasks_notification = PythonOperator(
@@ -190,25 +193,30 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-   # http_local_post_500_1 = BashOperator(
-   #     task_id='http_local_post_500_1',
-   #     bash_command='echo "Failed Task"; exit 1;',
-   #     dag=dag,
-   # )
-
+    check_ltc_folder_task = KubernetesJobOperator(
+        task_id='Check_LTC_Shared_Folder',
+        job_template_file='{{var.value.medis_emtydir_job}}',
+        wait_until_job_complete=True,
+    )
 
     start_facility_extract = EmptyOperator(
         task_id="Start_LTC_Facility_Extract",
     )
 
+    check_ltc_sftp_folder_task = KubernetesJobOperator(
+        task_id='Check_LTC_SFTP_Folder',
+        job_template_file='{{var.value.medis_emtysftp_job}}',
+        wait_until_job_complete=True,
+    )
 
+    check_ltc_sftp_folder_task >> check_ltc_folder_task >> start_facility_extract
+    
     start_facility_extract >> facility_fha_task >> start_ytd_extract
     start_facility_extract >> facility_iha_task >> start_ytd_extract
     start_facility_extract >> facility_viha_task >> start_ytd_extract
     start_facility_extract >> facility_nha_task >> start_ytd_extract
     start_facility_extract >> facility_vch_task >> start_ytd_extract
-   # start_facility_extract >> http_local_post_500_1 >> start_ytd_extract
-
+   
     start_ytd_extract >> ytd_fha_task >> etl_job_task
     start_ytd_extract >> ytd_iha_task >> etl_job_task
     start_ytd_extract >> ytd_viha_task >> etl_job_task
@@ -217,13 +225,6 @@ with DAG(
 
     etl_job_task >> failed_tasks_notification
 
-
-    #delay_5s_task = BashOperator(
-    #    task_id="Delay",
-    #    bash_command="sleep 5s",
-    #)
-
-    #delay_5s_task >> facility_viha_task
 
 
 if __name__ == "__main__":
