@@ -15,7 +15,8 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-"""Example DAG demonstrating the usage of the BashOperator."""
+
+
 from __future__ import annotations
 
 import datetime
@@ -192,12 +193,6 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-   # http_local_post_500_1 = BashOperator(
-   #     task_id='http_local_post_500_1',
-   #     bash_command='echo "Failed Task"; exit 1;',
-   #     dag=dag,
-   # )
-
     check_ltc_folder_task = KubernetesJobOperator(
         task_id='Check_LTC_Shared_Folder',
         job_template_file='{{var.value.medis_emtydir_job}}',
@@ -208,15 +203,20 @@ with DAG(
         task_id="Start_LTC_Facility_Extract",
     )
 
-    check_ltc_folder_task >> start_facility_extract
+    check_ltc_sftp_folder_task = KubernetesJobOperator(
+        task_id='Check_LTC_SFTP_Folder',
+        job_template_file='{{var.value.medis_emtysftp_job}}',
+        wait_until_job_complete=True,
+    )
+
+    check_ltc_sftp_folder_task >> check_ltc_folder_task >> start_facility_extract
     
     start_facility_extract >> facility_fha_task >> start_ytd_extract
     start_facility_extract >> facility_iha_task >> start_ytd_extract
     start_facility_extract >> facility_viha_task >> start_ytd_extract
     start_facility_extract >> facility_nha_task >> start_ytd_extract
     start_facility_extract >> facility_vch_task >> start_ytd_extract
-   # start_facility_extract >> http_local_post_500_1 >> start_ytd_extract
-
+   
     start_ytd_extract >> ytd_fha_task >> etl_job_task
     start_ytd_extract >> ytd_iha_task >> etl_job_task
     start_ytd_extract >> ytd_viha_task >> etl_job_task
@@ -225,13 +225,6 @@ with DAG(
 
     etl_job_task >> failed_tasks_notification
 
-
-    #delay_5s_task = BashOperator(
-    #    task_id="Delay",
-    #    bash_command="sleep 5s",
-    #)
-
-    #delay_5s_task >> facility_viha_task
 
 
 if __name__ == "__main__":
