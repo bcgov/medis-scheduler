@@ -150,6 +150,17 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
+    check_pcd_folder_task = KubernetesJobOperator(
+        task_id='Check_PCD_Shared_Folder',
+        job_template_file='{{var.value.pcd_emtydir_job}}',
+    )
+
+    check_pcd_sftp_folder_task = KubernetesJobOperator(
+        task_id='Check_PCD_SFTP_Folder',
+        job_template_file='{{var.value.pcd_emtysftp_job}}',
+        wait_until_job_complete=True,
+    )
+    
     check_pcd_sftp_folder_task >> check_pcd_folder_task >> start_pcd_extract_1
   
  #   start_pcd_extract_1 >> status_tracker_task >> start_pcd_extract_2
