@@ -39,13 +39,13 @@ from airflow.models import Variable
 
 
 with DAG(
-    dag_id="pcd-etl",
+    dag_id="test_DAG",
     #schedule="0 0 * * *",
     schedule=None,
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
     dagrun_timeout=datetime.timedelta(minutes=60),
-    tags=["etl", "pcd"],
+    tags=["test", "DAG"],
    # params={"example_key": "example_value"},
 ) as dag:
 
@@ -160,7 +160,7 @@ with DAG(
         job_template_file='{{var.value.pcd_emtysftp_job}}',
         wait_until_job_complete=True,
     )
-    
+
     check_pcd_sftp_folder_task >> check_pcd_folder_task >> start_pcd_extract_1
   
  #   start_pcd_extract_1 >> status_tracker_task >> start_pcd_extract_2
