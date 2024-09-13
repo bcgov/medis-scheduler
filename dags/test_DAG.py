@@ -141,14 +141,6 @@ with DAG(
         headers={"Content-Type": "application/json"},
     ) 
 
-    pcn_financial_reporting_task = HttpOperator(
-        task_id='PCN_Financial_Reporting',
-        method='POST',
-        endpoint='{{var.value.pcd_pcn_financial_reporting_url}}',
-        response_check=lambda response: response.json()["statusCode"]==200,
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
-        headers={"Content-Type": "application/json"},
-    )
 
     check_pcd_folder_task = KubernetesJobOperator(
         task_id='Check_PCD_Shared_Folder',
@@ -167,11 +159,8 @@ with DAG(
     start_pcd_extract_1 >> financial_expense_task >> start_pcd_extract_2
     start_pcd_extract_1 >> upcc_financial_reporting_task >> start_pcd_extract_2
     start_pcd_extract_1 >> chc_financial_reporting_task >> start_pcd_extract_2
-    start_pcd_extract_1 >> pcn_financial_reporting_task >> start_pcd_extract_2
 
-
-
-    start_pcd_extract_2 >> failed_tasks_notification
+    start_pcd_extract_2 >> etl_job_task >> failed_tasks_notification
 
 
 
