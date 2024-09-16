@@ -126,7 +126,7 @@ with DAG(
     upcc_financial_reporting_task = HttpOperator(
         task_id='UPCC_Financial_Reportingr',
         method='POST',
-        endpoint='{{var.value.pcd_upcc_budget_url}}',
+        endpoint='{{var.value.pcd_upcc_financial_reporting_url}}',
         response_check=lambda response: response.json()["statusCode"]==200,
         data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
         headers={"Content-Type": "application/json"},
