@@ -159,23 +159,23 @@ with DAG(
     #    headers={"Content-Type": "application/json"},
     #)
   
-    #decision_log_task = HttpOperator(
-    #    task_id='Decision_Log',
-    #    method='POST',
-    #    endpoint='{{var.value.pcd_decision_log_url}}',
-    #    response_check=lambda response: response.json()["statusCode"]==200,
-    #    data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
-    #    headers={"Content-Type": "application/json"},
-    #)
+    decision_log_task = HttpOperator(
+        task_id='Decision_Log',
+        method='POST',
+        endpoint='{{var.value.pcd_decision_log_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
 
-    #ha_hierarchy_task = HttpOperator(
-    #    task_id='HA_Hierarchy',
-    #    method='POST',
-    #    endpoint='{{var.value.pcd_ha_hierarchy_url}}',
-    #    response_check=lambda response: response.json()["statusCode"]==200,
-    #    data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
-    #    headers={"Content-Type": "application/json"},
-    #)
+    ha_hierarchy_task = HttpOperator(
+        task_id='HA_Hierarchy',
+        method='POST',
+        endpoint='{{var.value.pcd_ha_hierarchy_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
 
     upcc_budget_task = HttpOperator(
         task_id='UPPC_Budget',
