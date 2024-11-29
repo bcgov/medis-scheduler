@@ -159,6 +159,24 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
+    upcc_pcps_task = HttpOperator(
+        task_id='UPCC_Primary_Care_Patient_Services',
+        method='POST',
+        endpoint='{{var.value.pcd_upcc_pcps_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    chc_pcps_task = HttpOperator(
+        task_id='CHC_Primary_Care_Patient_Services',
+        method='POST',
+        endpoint='{{var.value.pcd_chc_pcps_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
     #status_tracker_task = HttpOperator(
     #    task_id='Status_Tracker',
     #    method='POST',
@@ -233,6 +251,8 @@ with DAG(
     start_pcd_extract_1 >> chc_financial_reporting_task >> start_pcd_extract_2
     start_pcd_extract_1 >> pcn_financial_reporting_task >> start_pcd_extract_2
     start_pcd_extract_1 >> fiscal_year_reporting_dates_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> upcc_pcps_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> chc_pcps_task >> start_pcd_extract_2
 
     start_pcd_extract_2 >> decision_log_task >> etl_job_task
     start_pcd_extract_2 >> ha_hierarchy_task >> etl_job_task
