@@ -150,6 +150,15 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
+    nppcc_financial_reporting_task = HttpOperator(
+        task_id='NPPCC_Financial_Reporting',
+        method='POST',
+        endpoint='{{var.value.pcd_nppcc_financial_reporting_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
     fiscal_year_reporting_dates_task = HttpOperator(
         task_id='Fiscal_Year_Reporting_Dates',
         method='POST',
@@ -177,6 +186,15 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
+    practitioner_role_mapping_task = HttpOperator(
+        task_id='Practitioner_Role_Mapping',
+        method='POST',
+        endpoint='{{var.value.pcd_practitioner_role_mapping_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
     #status_tracker_task = HttpOperator(
     #    task_id='Status_Tracker',
     #    method='POST',
@@ -185,6 +203,15 @@ with DAG(
     #    data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
     #    headers={"Content-Type": "application/json"},
     #)
+
+    provincial_risk_tracking_task = HttpOperator(
+        task_id='Provincial_Risk_Tracking',
+        method='POST',
+        endpoint='{{var.value.pcd_provincial_risk_tracking_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
   
     decision_log_task = HttpOperator(
         task_id='Decision_Log',
@@ -231,6 +258,15 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
+    nppcc_budget_task = HttpOperator(
+        task_id='NPPCC_Budget',
+        method='POST',
+        endpoint='{{var.value.pcd_nppcc_budget_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
     check_pcd_folder_task = KubernetesJobOperator(
         task_id='Check_PCD_Shared_Folder',
         job_template_file='{{var.value.pcd_emtydir_job}}',
@@ -250,15 +286,19 @@ with DAG(
     start_pcd_extract_1 >> upcc_financial_reporting_task >> start_pcd_extract_2
     start_pcd_extract_1 >> chc_financial_reporting_task >> start_pcd_extract_2
     start_pcd_extract_1 >> pcn_financial_reporting_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> nppcc_financial_reporting_task >> start_pcd_extract_2
     start_pcd_extract_1 >> fiscal_year_reporting_dates_task >> start_pcd_extract_2
     start_pcd_extract_1 >> upcc_pcps_task >> start_pcd_extract_2
     start_pcd_extract_1 >> chc_pcps_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> practitioner_role_mapping_task >> start_pcd_extract_2
 
+    start_pcd_extract_2 >> provincial_risk_tracking_task >> etl_job_task
     start_pcd_extract_2 >> decision_log_task >> etl_job_task
     start_pcd_extract_2 >> ha_hierarchy_task >> etl_job_task
     start_pcd_extract_2 >> upcc_budget_task >> etl_job_task
     start_pcd_extract_2 >> chc_budget_task >> etl_job_task
     start_pcd_extract_2 >> pcn_budget_task >> etl_job_task
+    start_pcd_extract_2 >> nppcc_budget_task >> etl_job_task
 
 
     etl_job_task >> failed_tasks_notification
