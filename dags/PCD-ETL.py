@@ -204,14 +204,14 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-    #hr_records_task = HttpOperator(
-    #    task_id='HR_Records',
-    #    method='POST',
-    #    endpoint='{{var.value.pcd_hr_records_url}}',
-    #    response_check=lambda response: response.json()["statusCode"]==200,
-    #    data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
-    #    headers={"Content-Type": "application/json"},
-    #)
+    hr_records_task = HttpOperator(
+        task_id='HR_Records',
+        method='POST',
+        endpoint='{{var.value.pcd_hr_records_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
 
     provincial_risk_tracking_task = HttpOperator(
         task_id='Provincial_Risk_Tracking',
@@ -304,7 +304,7 @@ with DAG(
     start_pcd_extract_2 >> provincial_risk_tracking_task >> etl_job_task
     start_pcd_extract_2 >> decision_log_task >> etl_job_task
     start_pcd_extract_2 >> ha_hierarchy_task >> etl_job_task
-    #start_pcd_extract_2 >> hr_records_task >> etl_job_task
+    start_pcd_extract_2 >> hr_records_task >> etl_job_task
     start_pcd_extract_2 >> upcc_budget_task >> etl_job_task
     start_pcd_extract_2 >> chc_budget_task >> etl_job_task
     start_pcd_extract_2 >> pcn_budget_task >> etl_job_task
