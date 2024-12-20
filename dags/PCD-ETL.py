@@ -195,10 +195,19 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
-    #status_tracker_task = HttpOperator(
-    #    task_id='Status_Tracker',
+    status_tracker_task = HttpOperator(
+        task_id='Status_Tracker',
+        method='POST',
+        endpoint='{{var.value.pcd_status_tracker_url}}',
+        response_check=lambda response: response.json()["statusCode"]==200,
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    #hr_records_task = HttpOperator(
+    #    task_id='HR_Records',
     #    method='POST',
-    #    endpoint='{{var.value.pcd_status_tracker_url}}',
+    #    endpoint='{{var.value.pcd_hr_records_url}}',
     #    response_check=lambda response: response.json()["statusCode"]==200,
     #    data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
     #    headers={"Content-Type": "application/json"},
@@ -281,7 +290,7 @@ with DAG(
 
     check_pcd_sftp_folder_task >> check_pcd_folder_task >> start_pcd_extract_1
   
- #   start_pcd_extract_1 >> status_tracker_task >> start_pcd_extract_2
+    start_pcd_extract_1 >> status_tracker_task >> start_pcd_extract_2
     start_pcd_extract_1 >> financial_expense_task >> start_pcd_extract_2
     start_pcd_extract_1 >> upcc_financial_reporting_task >> start_pcd_extract_2
     start_pcd_extract_1 >> chc_financial_reporting_task >> start_pcd_extract_2
@@ -295,6 +304,7 @@ with DAG(
     start_pcd_extract_2 >> provincial_risk_tracking_task >> etl_job_task
     start_pcd_extract_2 >> decision_log_task >> etl_job_task
     start_pcd_extract_2 >> ha_hierarchy_task >> etl_job_task
+    #start_pcd_extract_2 >> hr_records_task >> etl_job_task
     start_pcd_extract_2 >> upcc_budget_task >> etl_job_task
     start_pcd_extract_2 >> chc_budget_task >> etl_job_task
     start_pcd_extract_2 >> pcn_budget_task >> etl_job_task
