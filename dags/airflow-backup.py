@@ -100,7 +100,7 @@ with DAG(
 
     airflow_backup_job_task = KubernetesJobOperator(
         task_id='Airflow-Backup',
-        job_template_file='{{var.value.aairflow_backup}}',
+        job_template_file='{{var.value.airflow_backup}}',
     )
 
     task_notification = PythonOperator(
