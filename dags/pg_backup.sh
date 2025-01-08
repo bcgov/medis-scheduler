@@ -1,11 +1,4 @@
 #!/bin/sh
-DATABASE_HOST=airflow-postgresql
-DATABASE_PORT=5432
-DATABASE_NAME=postgres
-DATABASE_USER=postgres
-DATABASE_PASSWORD=postgres
-DATABASE_BACKUP_KEEP=2
-
 BFILENAME=backup-"${DATABASE_NAME}-"`date +%Y-%m-%d_%H%M%S`.sql.gz;
 PGPASSWORD="${DATABASE_PASSWORD}" pg_dump --username=$DATABASE_USER --host=$DATABASE_HOST --port=$DATABASE_PORT --column-inserts --clean --create ${DATABASE_NAME} | gzip > /backup/"$BFILENAME"; 
 PGDUMP_RETURN_CODE=${?}
