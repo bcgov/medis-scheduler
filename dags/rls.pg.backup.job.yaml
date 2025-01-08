@@ -32,7 +32,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: app-db-username
-                  name: airflow-pg-secret
+                  name: app-db-secret
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
