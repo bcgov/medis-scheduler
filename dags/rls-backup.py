@@ -108,12 +108,12 @@ with DAG(
         task_id="Task_Notification", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
 
     start_rls_db_backup = EmptyOperator(
-        task_id="Start_Airflow_DB_Backup",
+        task_id="Start_RLS_DB_Backup",
     )
 
 
 
-    start_airflow_db_backup >> airflow_backup_job_task >> task_notification
+    start_rls_db_backup >> rls_backup_job_task >> task_notification
   
 
 
