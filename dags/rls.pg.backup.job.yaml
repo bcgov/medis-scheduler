@@ -32,21 +32,21 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: app-db-username
-                  name: app-db-secret
+                  name: rls-patroni-dev
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: app-db-password
-                  name: app-db-secret
+                  name: rls-patroni-dev
             - name: DATABASE_NAME
               valueFrom:
                 secretKeyRef:
                   key: app-db-name
-                  name: app-db-secret
+                  name: rls-patroni-dev
             - name: DATABASE_BACKUP_KEEP
               value: 14
             - name: DATABASE_HOST
-              value: app-db-secret
+              value: rls-patroni-dev
             - name: DATABASE_PORT
               value: 5432
             - name: TZ
