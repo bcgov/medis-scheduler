@@ -11,6 +11,8 @@ spec:
     metadata:
       labels:
         name: pg-backup-job
+        app: medis-rls
+        role: db-backup
     spec:
       volumes:
         - name: backup-bin
