@@ -100,7 +100,7 @@ with DAG(
 
     rls_backup_job_task = KubernetesJobOperator(
         task_id='RLS-Backup',
-        namespace='d7f676-dev',
+        namespace='{{var.value.rls_namespace}}',
         job_template_file='{{var.value.rls_backup}}',
     )
 
