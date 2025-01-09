@@ -113,6 +113,14 @@ with DAG(
         task_id="Start_LTC_YTD_Extract",
     )
 
+    start_budget_extract = EmptyOperator(
+        task_id="Start_LTC_BUDGET_Extract",
+    )
+
+    start_staffing_extract = EmptyOperator(
+        task_id="Start_LTC_STAFFING_Extract",
+    )
+
     ytd_fha_task = HttpOperator(
         task_id='LTC_YTD_Fraser',
         method='POST',
@@ -193,6 +201,88 @@ with DAG(
         headers={"Content-Type": "application/json"},
     )
 
+    budget_fha_task = HttpOperator(
+        task_id='LTC_Budget_Fraser',
+        method='POST',
+        endpoint='{{var.value.budget_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    budget_iha_task = HttpOperator(
+        task_id='LTC_Budget_Interior',
+        method='POST',
+        endpoint='{{var.value.budget_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    budget_viha_task = HttpOperator(
+        task_id='LTC_Budget_Island',
+        method='POST',
+        endpoint='{{var.value.budget_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    ) 
+
+    budget_nha_task = HttpOperator(
+        task_id='LTC_Budget_Northern',
+        method='POST',
+        endpoint='{{var.value.budget_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    budget_vch_task = HttpOperator(
+        task_id='LTC_Budget_Vancouver',
+        method='POST',
+        endpoint='{{var.value.budget_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    staffing_fha_task = HttpOperator(
+        task_id='LTC_Staffing_Fraser',
+        method='POST',
+        endpoint='{{var.value.staffing_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    staffing_iha_task = HttpOperator(
+        task_id='LTC_Staffing_Interior',
+        method='POST',
+        endpoint='{{var.value.staffing_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    staffing_viha_task = HttpOperator(
+        task_id='LTC_Staffing_Island',
+        method='POST',
+        endpoint='{{var.value.staffing_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    ) 
+
+    staffing_nha_task = HttpOperator(
+        task_id='LTC_Staffing_Northern',
+        method='POST',
+        endpoint='{{var.value.staffing_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    staffing_vch_task = HttpOperator(
+        task_id='LTC_Staffing_Vancouver',
+        method='POST',
+        endpoint='{{var.value.staffing_url}}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
+        headers={"Content-Type": "application/json"},
+    )
+
+    
+
     check_ltc_folder_task = KubernetesJobOperator(
         task_id='Check_LTC_Shared_Folder',
         job_template_file='{{var.value.medis_emtydir_job}}',
@@ -216,12 +306,24 @@ with DAG(
     start_facility_extract >> facility_viha_task >> start_ytd_extract
     start_facility_extract >> facility_nha_task >> start_ytd_extract
     start_facility_extract >> facility_vch_task >> start_ytd_extract
+
+    start_ytd_extract >> ytd_fha_task >> start_staffing_extract
+    start_ytd_extract >> ytd_iha_task >> start_staffing_extract
+    start_ytd_extract >> ytd_viha_task >> start_staffing_extract
+    start_ytd_extract >> ytd_nha_task >> start_staffing_extract
+    start_ytd_extract >> ytd_vch_task >> start_staffing_extract
+
+    start_staffing_extract >> staffing_fha_task >> start_budget_extract
+    start_staffing_extract >> staffing_iha_task >> start_budget_extract
+    start_staffing_extract >> staffing_viha_task >> start_budget_extract
+    start_staffing_extract >> staffing_nha_task >> start_budget_extract
+    start_staffing_extract >> staffing_vch_task >> start_budget_extract
    
-    start_ytd_extract >> ytd_fha_task >> etl_job_task
-    start_ytd_extract >> ytd_iha_task >> etl_job_task
-    start_ytd_extract >> ytd_viha_task >> etl_job_task
-    start_ytd_extract >> ytd_nha_task >> etl_job_task
-    start_ytd_extract >> ytd_vch_task >> etl_job_task
+    start_budget_extract >> budget_fha_task >> etl_job_task
+    start_budget_extract >> budget_iha_task >> etl_job_task
+    start_budget_extract >> budget_viha_task >> etl_job_task
+    start_budget_extract >> budget_nha_task >> etl_job_task
+    start_budget_extract >> budget_vch_task >> etl_job_task
 
     etl_job_task >> failed_tasks_notification
 
