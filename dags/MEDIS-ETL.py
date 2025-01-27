@@ -307,11 +307,7 @@ with DAG(
     start_facility_extract >> facility_nha_task >> start_ytd_extract
     start_facility_extract >> facility_vch_task >> start_ytd_extract
 
-    start_ytd_extract >> ytd_fha_task >> start_staffing_extract
-    start_ytd_extract >> ytd_iha_task >> start_staffing_extract
-    start_ytd_extract >> ytd_viha_task >> start_staffing_extract
-    start_ytd_extract >> ytd_nha_task >> start_staffing_extract
-    start_ytd_extract >> ytd_vch_task >> start_staffing_extract
+    start_ytd_extract >> ytd_fha_task >> ytd_iha_task  >> ytd_viha_task >> ytd_nha_task>> ytd_vch_task >> start_staffing_extract
 
     start_staffing_extract >> staffing_fha_task >> start_budget_extract
     start_staffing_extract >> staffing_iha_task >> start_budget_extract
