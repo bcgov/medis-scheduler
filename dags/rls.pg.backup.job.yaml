@@ -1,0 +1,62 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgres-backup
+spec:
+  parallelism: 1
+  completions: 1
+  activeDeadlineSeconds: 600
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        name: pg-backup-job
+        app: medis-rls
+        role: db-backup
+    spec:
+      volumes:
+        - name: backup-bin
+          configMap:
+            name: pg-backup-bin
+            defaultMode: 0777
+        - name: database-backup
+          persistentVolumeClaim:
+            claimName: pg-backup-pvc
+      containers:
+        - name: database-backup
+          image: 'alpine/psql:16.3'
+          command:
+            - "sh"
+            - "-c"
+            - "/app/bin/pg_backup.sh"
+          env:
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  key: app-db-username
+                  name: rls-patroni-dev
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: app-db-password
+                  name: rls-patroni-dev
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: app-db-name
+                  name: rls-patroni-dev
+            - name: DATABASE_BACKUP_KEEP
+              value: 14
+            - name: DATABASE_HOST
+              value: rls-patroni-dev
+            - name: DATABASE_PORT
+              value: 5432
+            - name: TZ
+              value: Europe/Zurich
+          volumeMounts:
+            - name: backup-bin
+              mountPath: /app/bin
+              readOnly: true
+            - name: database-backup
+              mountPath: /backup
+      restartPolicy: Never

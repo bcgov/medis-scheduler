@@ -39,13 +39,13 @@ from airflow.models import Variable
 
 
 with DAG(
-    dag_id="test_DAG",
-    #schedule="0 0 * * *",
-    schedule=None,
+    dag_id="airflow-backup",
+    schedule="0 0 * * *",
+   # schedule=None,
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
     dagrun_timeout=datetime.timedelta(minutes=60),
-    tags=["test", "DAG"],
+    tags=["etl", "pcd"],
    # params={"example_key": "example_value"},
 ) as dag:
 
@@ -84,7 +84,7 @@ with DAG(
         # If no upstream tasks have failed, send an email with success message
         if len(failed_upstream_task_ids) == 0:
             send_email(
-                to=Variable.get("PCD_ETL_email_list_success"),
+                to=Variable.get("ETL_email_list_alerts"),
                 subject='Airflow ' + dag_id + ' run SUCCEEDED!',
                 html_content=generate_success_html(dag_id),
             )
@@ -98,70 +98,22 @@ with DAG(
         return failed_upstream_task_ids
 
 
-    etl_job_task = KubernetesJobOperator(
-        task_id='PCD_file_upload',
-        job_template_file='{{var.value.pcd_job}}',
+    airflow_backup_job_task = KubernetesJobOperator(
+        task_id='Airflow-Backup',
+        job_template_file='{{var.value.airflow_backup}}',
     )
 
-    failed_tasks_notification = PythonOperator(
-        task_id="ETL_Notification", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
+    task_notification = PythonOperator(
+        task_id="Task_Notification", python_callable=get_failed_ids_send_email, trigger_rule="all_done")
 
-    start_pcd_extract_1 = EmptyOperator(
-        task_id="Start_PCD_Extract_1",
+    start_airflow_db_backup = EmptyOperator(
+        task_id="Start_Airflow_DB_Backup",
     )
 
-    start_pcd_extract_2 = EmptyOperator(
-        task_id="Start_PCD_Extract_2",
-    )
-
-    financial_expense_task = HttpOperator(
-        task_id='Financial_Expense',
-        method='POST',
-        endpoint='{{var.value.pcd_financial_expense_url}}',
-        response_check=lambda response: response.json()["statusCode"]==200,
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
-        headers={"Content-Type": "application/json"},
-    )
-
-    upcc_financial_reporting_task = HttpOperator(
-        task_id='UPCC_Financial_Reportingr',
-        method='POST',
-        endpoint='{{var.value.pcd_upcc_budget_url}}',
-        response_check=lambda response: response.json()["statusCode"]==200,
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
-        headers={"Content-Type": "application/json"},
-    )
-    
-    chc_financial_reporting_task = HttpOperator(
-        task_id='CHC_Financial_reporting',
-        method='POST',
-        endpoint='{{var.value.pcd_chc_financial_reporting_url}}',
-        response_check=lambda response: response.json()["statusCode"]==200,
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
-        headers={"Content-Type": "application/json"},
-    ) 
 
 
-    check_pcd_folder_task = KubernetesJobOperator(
-        task_id='Check_PCD_Shared_Folder',
-        job_template_file='{{var.value.pcd_emtydir_job}}',
-    )
-
-    check_pcd_sftp_folder_task = KubernetesJobOperator(
-        task_id='Check_PCD_SFTP_Folder',
-        job_template_file='{{var.value.pcd_emtysftp_job}}',
-        wait_until_job_complete=True,
-    )
-
-    check_pcd_sftp_folder_task >> check_pcd_folder_task >> start_pcd_extract_1
+    start_airflow_db_backup >> airflow_backup_job_task >> task_notification
   
- #   start_pcd_extract_1 >> status_tracker_task >> start_pcd_extract_2
-    start_pcd_extract_1 >> financial_expense_task >> start_pcd_extract_2
-    start_pcd_extract_1 >> upcc_financial_reporting_task >> start_pcd_extract_2
-    start_pcd_extract_1 >> chc_financial_reporting_task >> start_pcd_extract_2
-
-    start_pcd_extract_2 >> etl_job_task >> failed_tasks_notification
-
 
 
 if __name__ == "__main__":
