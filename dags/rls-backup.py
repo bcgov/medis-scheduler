@@ -102,6 +102,7 @@ with DAG(
         task_id='RLS-Backup',
         namespace='{{var.value.rls_namespace}}',
         job_template_file='{{var.value.rls_backup}}',
+        wait_until_job_complete=True,
     )
 
     task_notification = PythonOperator(
