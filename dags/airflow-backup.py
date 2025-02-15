@@ -87,7 +87,6 @@ with DAG(
                 to=Variable.get("ETL_email_list_alerts"),
                 subject='Airflow ' + dag_id + ' run SUCCEEDED!',
                 html_content=generate_success_html(dag_id),
-                wait_until_job_complete=True,
             )
         # If there are failed upstream tasks, send an email with the failed task IDs
         elif len(failed_upstream_task_ids) > 0:
@@ -102,6 +101,7 @@ with DAG(
     airflow_backup_job_task = KubernetesJobOperator(
         task_id='Airflow-Backup',
         job_template_file='{{var.value.airflow_backup}}',
+        wait_until_job_complete=True,
     )
 
     task_notification = PythonOperator(
