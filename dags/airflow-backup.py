@@ -87,6 +87,7 @@ with DAG(
                 to=Variable.get("ETL_email_list_alerts"),
                 subject='Airflow ' + dag_id + ' run SUCCEEDED!',
                 html_content=generate_success_html(dag_id),
+                wait_until_job_complete=True,
             )
         # If there are failed upstream tasks, send an email with the failed task IDs
         elif len(failed_upstream_task_ids) > 0:
