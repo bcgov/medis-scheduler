@@ -66,7 +66,9 @@ with DAG(
     # Function to generate HTML content for email in case of success
     def generate_success_html(dag_id):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-        html_content = "<html><head></head><body>Airflow %s DAG run at %s succeeded<p>Automatically generated message in case of success.</p></body></html>" % (dag_id,current_time)
+        html_content = "<html><head></head><body><a href='" + \
+           Variable.get("Environment") + "'>" + \
+           Variable.get("Environment") + " Airflow %s DAG run at %s succeeded<p>Automatically generated message in case of success.</p></body></html>" % (dag_id,current_time)
         print(html_content)
         return html_content
 
