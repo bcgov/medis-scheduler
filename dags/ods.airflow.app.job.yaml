@@ -12,22 +12,22 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: medis-empty-job-airflow-once
+  name: medis-ods-sftp-job-airflow-once
 spec:
   parallelism: 1
   completions: 1
   activeDeadlineSeconds: 600
   backoffLimit: 1
   selector:
-    name: medis-empty-job
+    name: medis-ods-sftp-job
   template:
     metadata:
       labels:
-        name: empty-job
+        name: sftp-job
     spec:
       containers:
         - image: image-registry.openshift-image-registry.svc:5000/c2da03-tools/medis-sftp-image:latest
-          name: empty
+          name: sftp
           resources:
             limits:
               cpu: 100m
@@ -35,13 +35,19 @@ spec:
           command:
             - 'sh'
             - '-c'
-            - '/app/bin/empty.sh'
+            - '/app/bin/upload.sh'
           envFrom:
             - configMapRef:
-                name: medis-sftp-config-env
+                name: medis-ods-sftp-config-env
           volumeMounts:
             - name: medis-data-vol
               mountPath: /data
+            - name: ssh-known-hosts
+              mountPath: /ssh-config
+              readOnly: true
+            - name: ssh-key
+              mountPath: /ssh-hi
+              readOnly: true
             - name: sftp-bin
               mountPath: /app/bin
               readOnly: true
@@ -49,8 +55,15 @@ spec:
         - name: medis-data-vol
           persistentVolumeClaim:
             claimName: medis-etl-pvc
+        - name: ssh-known-hosts
+          configMap:
+            name: medis-sftp-config
         - name: sftp-bin
           configMap:
             name: medis-sftp-bin
             defaultMode: 0777
+        - name: ssh-key
+          secret:
+            secretName: medis-sftp-secret
+            defaultMode: 400
       restartPolicy: Never
