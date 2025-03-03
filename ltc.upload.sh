@@ -1,6 +1,6 @@
 #!/bin/sh
 TS=`date +%Y%m%d%H%M%S`
-cd /data/encrypted/ltc
+cd ${DATA_DIR}
 echo -e "Files to be uploaded\n"
 ls -l
 echo -e "Creating medis_ltc.flag file"
