@@ -12,14 +12,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: medis-empty-job-airflow-once
+  name: medis-ods-empty-job-airflow-once
 spec:
   parallelism: 1
   completions: 1
   activeDeadlineSeconds: 600
   backoffLimit: 1
   selector:
-    name: medis-empty-job
+    name: medis-ods-empty-job
   template:
     metadata:
       labels:
@@ -38,7 +38,7 @@ spec:
             - '/app/bin/empty.sh'
           envFrom:
             - configMapRef:
-                name: medis-sftp-config-env
+                name: medis-ods-sftp-config-env
           volumeMounts:
             - name: medis-data-vol
               mountPath: /data
