@@ -42,7 +42,7 @@ from airflow.models import Variable
 
 with DAG(
     dag_id="medis-ods-etl",
-    schedule="0 10 * * 1-5",
+    # schedule="0 10 * * 1-5",
     schedule=None,
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
