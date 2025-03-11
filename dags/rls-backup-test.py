@@ -85,14 +85,14 @@ with DAG(
         if len(failed_upstream_task_ids) == 0:
             send_email(
                 to=Variable.get("ETL_email_list_alerts"),
-                subject='Airflow ' + dag_id + ' run SUCCEEDED!',
+                subject='TEST Airflow ' + dag_id + ' run SUCCEEDED!',
                 html_content=generate_success_html(dag_id),
             )
         # If there are failed upstream tasks, send an email with the failed task IDs
         elif len(failed_upstream_task_ids) > 0:
             send_email(
                 to=Variable.get("ETL_email_list_alerts"),
-                subject='Airflow ' + dag_id + ' run FAILED!',
+                subject='TEST Airflow ' + dag_id + ' run FAILED!',
                 html_content=generate_failed_html(failed_upstream_task_ids,dag_id),
             )
         return failed_upstream_task_ids
