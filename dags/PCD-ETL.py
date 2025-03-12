@@ -37,10 +37,11 @@ from airflow.exceptions import AirflowSkipException
 from airflow.utils.email import send_email
 from airflow.models import Variable
 
+pcd_etl_schedule = Variable.get("pcd_etl_schedule")
 
 with DAG(
     dag_id="pcd-etl",
-    schedule=Variable.get("pcd_etl_schedule"),
+    schedule=None if pcd_etl_schedule == "None" else pcd_etl_schedule,
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
     dagrun_timeout=datetime.timedelta(minutes=60),
