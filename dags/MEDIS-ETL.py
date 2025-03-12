@@ -39,10 +39,11 @@ from airflow.exceptions import AirflowSkipException
 from airflow.utils.email import send_email
 from airflow.models import Variable
 
+medis_schedule = Variable.get("medis_schedule")
 
 with DAG(
     dag_id="medis-etl",
-    schedule=Variable.get("medis_schedule"),
+    schedule=None if medis_schedule == "None" else medis_schedule,
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
     dagrun_timeout=datetime.timedelta(minutes=60),
