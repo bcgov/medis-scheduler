@@ -159,10 +159,6 @@ with DAG(
         wait_until_job_complete=True,
     )
 
-    start_facility_extract = EmptyOperator(
-        task_id="Start_LTC_Facility_Extract",
-    )
-
     check_ltc_sftp_folder_task = KubernetesJobOperator(
         task_id='Check_LTC_SFTP_Folder',
         job_template_file='{{var.value.medis_ods_emptysftp_job}}',
