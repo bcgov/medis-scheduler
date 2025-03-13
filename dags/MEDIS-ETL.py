@@ -20,7 +20,6 @@
 from __future__ import annotations
 
 import datetime
-from datetime import date
 
 import pendulum
 
@@ -92,7 +91,8 @@ with DAG(
                 subject=Variable.get("Environment") + ' Airflow ' + dag_id + ' run SUCCEEDED!',
                 html_content=generate_success_html(dag_id),
             )
-            Variable.set("medis_last_load_date", date.today())
+            success_time = datetime.datetime.now(datetime.UTC)
+            Variable.set("medis_last_load_date", success_time.isoformat().replace('+00:00', 'Z'))
         # If there are failed upstream tasks, send an email with the failed task IDs
         elif len(failed_upstream_task_ids) > 0:
             send_email(
