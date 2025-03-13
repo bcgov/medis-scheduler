@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import datetime
+from datetime import date
 
 import pendulum
 
@@ -40,6 +41,7 @@ from airflow.utils.email import send_email
 from airflow.models import Variable
 
 medis_schedule = Variable.get("medis_schedule")
+medis_last_load_date = Variable.get("medis_last_load_date")
 
 with DAG(
     dag_id="medis-etl",
@@ -90,6 +92,7 @@ with DAG(
                 subject=Variable.get("Environment") + ' Airflow ' + dag_id + ' run SUCCEEDED!',
                 html_content=generate_success_html(dag_id),
             )
+            Variable.set("medis_last_load_date", date.today())
         # If there are failed upstream tasks, send an email with the failed task IDs
         elif len(failed_upstream_task_ids) > 0:
             send_email(
@@ -125,7 +128,7 @@ with DAG(
         task_id='LTC_YTD_Fraser',
         method='POST',
         endpoint='{{var.value.quarterly_ytd_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -133,7 +136,7 @@ with DAG(
         task_id='LTC_YTD_Interior',
         method='POST',
         endpoint='{{var.value.quarterly_ytd_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
     
@@ -141,7 +144,7 @@ with DAG(
         task_id='LTC_YTD_Island',
         method='POST',
         endpoint='{{var.value.quarterly_ytd_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     ) 
 
@@ -149,7 +152,7 @@ with DAG(
         task_id='LTC_YTD_Northern',
         method='POST',
         endpoint='{{var.value.quarterly_ytd_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -157,7 +160,7 @@ with DAG(
         task_id='LTC_YTD_Vancouver',
         method='POST',
         endpoint='{{var.value.quarterly_ytd_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
   
@@ -165,7 +168,7 @@ with DAG(
         task_id='LTC_Facility_Information_Fraser',
         method='POST',
         endpoint='{{var.value.facility_information_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -173,7 +176,7 @@ with DAG(
         task_id='LTC_Facility_Information_Interior',
         method='POST',
         endpoint='{{var.value.facility_information_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -181,7 +184,7 @@ with DAG(
         task_id='LTC_Facility_Information_Island',
         method='POST',
         endpoint='{{var.value.facility_information_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     ) 
 
@@ -189,7 +192,7 @@ with DAG(
         task_id='LTC_Facility_Information_Northern',
         method='POST',
         endpoint='{{var.value.facility_information_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -197,7 +200,7 @@ with DAG(
         task_id='LTC_Facility_Information_Vancouver',
         method='POST',
         endpoint='{{var.value.facility_information_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -205,7 +208,7 @@ with DAG(
         task_id='LTC_Budget_Fraser',
         method='POST',
         endpoint='{{var.value.budget_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -213,7 +216,7 @@ with DAG(
         task_id='LTC_Budget_Interior',
         method='POST',
         endpoint='{{var.value.budget_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -221,7 +224,7 @@ with DAG(
         task_id='LTC_Budget_Island',
         method='POST',
         endpoint='{{var.value.budget_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     ) 
 
@@ -229,7 +232,7 @@ with DAG(
         task_id='LTC_Budget_Northern',
         method='POST',
         endpoint='{{var.value.budget_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -237,7 +240,7 @@ with DAG(
         task_id='LTC_Budget_Vancouver',
         method='POST',
         endpoint='{{var.value.budget_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -245,7 +248,7 @@ with DAG(
         task_id='LTC_Staffing_Fraser',
         method='POST',
         endpoint='{{var.value.staffing_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"FHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -253,7 +256,7 @@ with DAG(
         task_id='LTC_Staffing_Interior',
         method='POST',
         endpoint='{{var.value.staffing_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"IHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -261,7 +264,7 @@ with DAG(
         task_id='LTC_Staffing_Island',
         method='POST',
         endpoint='{{var.value.staffing_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VIHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     ) 
 
@@ -269,7 +272,7 @@ with DAG(
         task_id='LTC_Staffing_Northern',
         method='POST',
         endpoint='{{var.value.staffing_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"NHA", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
@@ -277,7 +280,7 @@ with DAG(
         task_id='LTC_Staffing_Vancouver',
         method='POST',
         endpoint='{{var.value.staffing_url}}',
-        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "", "endDate":"", "updatedMinDate":"%s", "updatedMaxDate":"", "draft":false, "deleted":true, "status":"COMPLETED", "healthAuthority":"VCH", "isHeaderAdded": false}' % (medis_last_load_date),
         headers={"Content-Type": "application/json"},
     )
 
