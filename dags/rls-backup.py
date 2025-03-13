@@ -52,7 +52,7 @@ with DAG(
     # Function to generate HTML content for email in case of failure
     def generate_failed_html(failed_ids,dag_id):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-        html_content = "<html><head></head><body>Airflow %s DAG run at %s failed<p>Automatically generated message in case of failure.</p><b>Failed Task IDs</b><ul>" % (dag_id,current_time)
+        html_content = "<html><head></head><body>%s Airflow %s DAG run at %s failed<p>Automatically generated message in case of failure.</p><b>Failed Task IDs</b><ul>" % (Variable.get("Environment"),dag_id,current_time)
         for failed_id in failed_ids:
             html_content += f"<li>{failed_id}</li>"
         html_content += "</ul>Please access Airflow and review tasks run: <a href='" + \
@@ -64,7 +64,7 @@ with DAG(
     # Function to generate HTML content for email in case of success
     def generate_success_html(dag_id):
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
-        html_content = "<html><head></head><body>Airflow %s DAG run at %s succeeded<p>Automatically generated message in case of success.</p></body></html>" % (dag_id,current_time)
+        html_content = "<html><head></head><body>%s Airflow %s DAG run at %s succeeded<p>Automatically generated message in case of success.</p></body></html>" % (Variable.get("Environment"),dag_id,current_time)
         print(html_content)
         return html_content
 
