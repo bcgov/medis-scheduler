@@ -112,7 +112,7 @@ with DAG(
         method='POST',
         endpoint='{{var.value.poly_wait_time_url}}',
         response_check=lambda response: response.json()["statusCode"]==200,
-        data='{"version" : "", "startDate" : "2025-04-06", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": false}',
+        data='{"version" : "", "startDate" : "2025-04-06", "endDate":"", "updatedMinDate":"", "updatedMaxDate":"", "draft":false, "deleted":false, "status":"SUBMITTED", "healthAuthority":"", "isHeaderAdded": true}',
         headers={"Content-Type": "application/json"},
     )
 
