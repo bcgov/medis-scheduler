@@ -23,10 +23,10 @@ import datetime
 import pendulum
 
 from airflow.models.dag import DAG
-from airflow.operators.empty import EmptyOperator
+from airflow.providers.standard.operators.empty import EmptyOperator
 from airflow.providers.http.operators.http import HttpOperator
 from airflow.providers.cncf.kubernetes.operators.job import KubernetesJobOperator
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
 from airflow.utils.email import send_email
 from airflow.models import Variable
 

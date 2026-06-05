@@ -27,14 +27,14 @@ import kubernetes.client as k8s
 import kubernetes_asyncio.client as async_k8s
 
 from airflow.models.dag import DAG
-from airflow.operators.bash import BashOperator
-from airflow.operators.empty import EmptyOperator
+from airflow.providers.standard.operators.bash import BashOperator
+from airflow.providers.standard.operators.empty import EmptyOperator
 from airflow.providers.http.operators.http import HttpOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.providers.cncf.kubernetes.callbacks import KubernetesPodOperatorCallback
 from airflow.providers.cncf.kubernetes.operators.job import KubernetesJobOperator
 from airflow.providers.cncf.kubernetes.hooks.kubernetes import KubernetesHook
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
 from airflow.exceptions import AirflowSkipException
 from airflow.utils.email import send_email
 from airflow.models import Variable
