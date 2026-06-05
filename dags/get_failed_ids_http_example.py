@@ -24,8 +24,8 @@ import pendulum
 
 from airflow.models.dag import DAG
 from airflow.providers.http.operators.http import HttpOperator
-from airflow.operators.python_operator import PythonOperator
-from airflow.operators.email_operator import EmailOperator
+from airflow.providers.standard.operators.python import PythonOperator
+from airflow.providers.smtp.operators.smtp import EmailOperator
 from airflow.exceptions import AirflowSkipException
 
 with DAG(
