@@ -24,7 +24,7 @@ import pendulum
 
 from airflow.models.dag import DAG
 from airflow.operators.bash import BashOperator
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.python import PythonOperator
 from airflow.utils.email import send_email
 from airflow.exceptions import AirflowSkipException
 from airflow.models import Variable

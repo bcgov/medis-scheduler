@@ -32,7 +32,7 @@ from airflow.providers.http.operators.http import HttpOperator
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.providers.cncf.kubernetes.callbacks import KubernetesPodOperatorCallback
 from airflow.providers.cncf.kubernetes.operators.job import KubernetesJobOperator
-from airflow.operators.email_operator import EmailOperator
+from airflow.operators.email import EmailOperator
 
 
 with DAG(
