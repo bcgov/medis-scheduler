@@ -38,6 +38,7 @@ from airflow.providers.standard.operators.python import PythonOperator
 from airflow.exceptions import AirflowSkipException
 from airflow.utils.email import send_email
 from airflow.models import Variable
+from airflow.sdk.execution_time.task_runner import RuntimeTaskInstance
 
 medis_schedule = Variable.get("medis_schedule")
 medis_last_load_date = Variable.get("medis_last_load_date")
@@ -78,11 +79,17 @@ with DAG(
         dag_id = kwargs['dag'].dag_id
         # Get all tasks that are upstream of this task
         upstream_task_ids = ti.task.get_flat_relative_ids(upstream=True)
-        # Get list of all tasks that have failed for this DagRun
-        failed_task_instances = dag_run.get_task_instances(state='failed')
-        # Get intersection of the sets to get upstream tasks that failed
-        failed_upstream_task_ids = upstream_task_ids.intersection(
-            [task.task_id for task in failed_task_instances])
+        # Get upstream tasks that failed for this DagRun
+        failed_upstream_task_ids = {
+            task_id
+            for task_id in upstream_task_ids
+            if RuntimeTaskInstance.get_ti_count(
+                dag_id=dag_id,
+                run_ids=[dag_run.run_id],
+                task_ids=[task_id],
+                states=["failed"],
+            ) > 0
+        }
         print(f"Upstream tasks that failed: {failed_upstream_task_ids}")
         # If no upstream tasks have failed, send an email with success message
         if len(failed_upstream_task_ids) == 0:
