@@ -1,17 +1,57 @@
-uid: 1014620001
-gid: 1014620001
+# MEDIS Airflow values for OpenShift TEST after the Airflow 3 upgrade.
+# This file is intended to be the single environment override file used with chart airflow-1.22.0.
 
+# Keep the existing Airflow resource names/PVC names rather than switching to standard naming.
+useStandardNaming: false
+
+# Airflow 3 target version.
+airflowVersion: 3.2.2
+images:
+  airflow:
+    tag: 3.2.2
+  # Give app pods more time while the migration job updates the existing metadata DB.
+  migrationsWaitTimeout: 300
+
+# OpenShift assigned UID range and allowed filesystem group for c2da03-test.
+# uid must be in 1014620000-1014629999; fsGroup/gid must be in the supplemental group range.
+uid: 1014620001
+gid: 1000660001
+
+# Preserve the OpenShift supplemental group that the previous Airflow 2.9 release used.
 securityContext:
   supplementalGroups: [1000660001]
 
+# Disable the legacy airflow_local_settings.py template. The old template imports airflow.www,
+# which is not available in Airflow 3.
+airflowLocalSettings: null
+
+# Use stable, named Secrets so Helm does not generate new runtime secrets on every upgrade.
+fernetKeySecretName: airflow-fernet-key
+apiSecretKeySecretName: airflow-api-secret-key
+jwtSecretName: airflow-jwt-secret
+webserverSecretKeySecretName: airflow-webserver-secret-key
+
+# With helm --wait, run these as normal Kubernetes Jobs instead of post-upgrade hooks.
+# Otherwise the Airflow pods wait for migrations before the post-upgrade hook job is created.
+createUserJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+
+migrateDatabaseJob:
+  enabled: true
+  useHelmHooks: false
+  applyCustomEnv: false
+
 workers:
   persistence:
+    enabled: true
     size: 5Gi
   resources:
     limits:
-      memory: 4Gi  
+      memory: 4Gi
 
-webserver:
+# Airflow 3 uses apiServer instead of the Airflow 2 webserver component.
+apiServer:
   resources:
     limits:
       cpu: 300m
@@ -47,9 +87,9 @@ scheduler:
       cpu: 150m
       memory: 256Mi
 
-
 triggerer:
   persistence:
+    enabled: true
     size: 5Gi
 
 statsd:
@@ -74,25 +114,66 @@ dags:
     subPath: "dags"
 
 postgresql:
+  enabled: true
+  image:
+    repository: bitnamilegacy/postgresql
+    tag: 16.1.0-debian-11-r15
+
+  # Bitnami PostgreSQL chart 13.x defaults to UID/GID 1001 and fsGroup 1001.
+  # Those are rejected by OpenShift restricted-v2 in this namespace, so keep
+  # the old OpenShift-compatible postgres UID and avoid the fsGroup/explicit seccomp defaults.
   primary:
+    podSecurityContext:
+      enabled: false
     containerSecurityContext:
+      enabled: true
       runAsUser: 1014620003
+      runAsNonRoot: true
+      privileged: false
+      readOnlyRootFilesystem: false
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+
   readReplicas:
+    podSecurityContext:
+      enabled: false
     containerSecurityContext:
+      enabled: true
       runAsUser: 1014620003
+      runAsNonRoot: true
+      privileged: false
+      readOnlyRootFilesystem: false
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+
   backup:
     cronjob:
+      podSecurityContext:
+        enabled: false
       containerSecurityContext:
+        enabled: true
         runAsUser: 1014620003
-     
+        runAsNonRoot: true
+        privileged: false
+        readOnlyRootFilesystem: false
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+
+  volumePermissions:
+    enabled: false
+  shmVolume:
+    enabled: false
 
 config:
-  webserver:
-    expose_config: 'True'  # by default this is 'False'
+  api:
+    expose_config: "True"
 
   smtp:
-    smtp_host: apps.smtp.gov.bc.ca  # befoult 'localhost'
-    smtp_mail_from: airflow@gov.bc.ca # default 'airflow@example.com'
-
-
-  
+    smtp_host: apps.smtp.gov.bc.ca
+    smtp_mail_from: airflow@gov.bc.ca
